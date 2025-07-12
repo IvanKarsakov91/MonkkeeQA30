@@ -8,30 +8,22 @@ public class LoginSteps {
 
     LoginPage loginPage = new LoginPage();
 
-    @Step("Открыть страницу авторизации")
+    @Step("Открыть страницу логина")
     public void openLoginPage() {
         loginPage.openLoginPage();
     }
 
-    @Step("Выполнить вход: email = {email}, пароль = {password}")
+    @Step("Вводим email: {email} и пароль: {password}")
     public void login(String email, String password) {
         loginPage.enterEmail(email);
         loginPage.enterPassword(password);
         loginPage.clickLogin();
     }
 
-    @Step("Нажать на ссылку восстановления пароля")
-    public void clickPasswordReminder() {
-        loginPage.clickPasswordReminder();
-    }
-
-    @Step("Перейти на страницу регистрации")
-    public void goToRegistration() {
-        loginPage.clickRegistrationLink();
-    }
-
-    @Step("Обновить страницу")
+    @Step("Обновляем страницу")
     public void refreshPage() {
         Selenide.refresh();
     }
 }
+
+

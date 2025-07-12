@@ -6,11 +6,10 @@ import static com.codeborne.selenide.Selenide.*;
 
 public class LoginPage {
 
-    public SelenideElement emailField = $("#username");
+    public SelenideElement emailField = $("#login");
     public SelenideElement passwordField = $("#password");
     public SelenideElement loginButton = $("button[type='submit']");
-    public SelenideElement passwordReminderLink = $("a[href*='password_reminder']");
-    public SelenideElement registrationLink = $("a[href*='registration']");
+    public SelenideElement loginErrorBlock = $("body");
 
     public void openLoginPage() {
         open("https://monkkee.com/app/#/");
@@ -27,12 +26,6 @@ public class LoginPage {
     public void clickLogin() {
         loginButton.click();
     }
-
-    public void clickPasswordReminder() {
-        passwordReminderLink.click();
-    }
-
-    public void clickRegistrationLink() {
-        registrationLink.click();
-    }
 }
+
+

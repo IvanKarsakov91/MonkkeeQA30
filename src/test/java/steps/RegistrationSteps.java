@@ -1,24 +1,48 @@
 package steps;
 
-import io.qameta.allure.Step;
+import com.codeborne.selenide.Selenide;
+import models.User;
 import pages.RegistrationPage;
 
 public class RegistrationSteps {
 
-    RegistrationPage registrationPage = new RegistrationPage();
+    private final RegistrationPage registrationPage = new RegistrationPage();
 
-    @Step("Заполнить форму регистрации")
-    public void fillRegistrationForm(String email, String password, String hint) {
-        registrationPage.enterEmail(email);
-        registrationPage.enterPassword(password);
-        registrationPage.confirmPassword(password);
-        registrationPage.enterPasswordHint(hint);
-        registrationPage.acceptPrivacyPolicy();
-        registrationPage.acceptResponsibility();
+    public void registerUserWithValidData(String url, User user) {
+        Selenide.open(url);
+        registrationPage.enterEmail(user.getEmail());
+        registrationPage.enterPassword(user.getPassword());
+        registrationPage.confirmPassword(user.getPasswordConfirmation());
+        registrationPage.enterPasswordHint(user.getPasswordHint());
+
+        registrationPage.acceptTermsOfUse();
+        registrationPage.confirmLostPasswordWarning();
+
+        registrationPage.submitRegistration();
     }
 
-    @Step("Отправить форму регистрации")
-    public void submitRegistration() {
+    public void registerUserWithEmptyFields(String url, User user) {
+        Selenide.open(url);
+        registrationPage.enterEmail(user.getEmail());
+        registrationPage.enterPassword(user.getPassword());
+        registrationPage.confirmPassword(user.getPasswordConfirmation());
+        registrationPage.enterPasswordHint(user.getPasswordHint());
+
+        registrationPage.acceptTermsOfUse();
+        registrationPage.confirmLostPasswordWarning();
+
+        registrationPage.submitRegistration();
+    }
+
+    public void registerUserWithoutConfirmation(String url, User user) {
+        Selenide.open(url);
+        registrationPage.enterEmail(user.getEmail());
+        registrationPage.enterPassword(user.getPassword());
+        registrationPage.enterPasswordHint(user.getPasswordHint());
+
+        registrationPage.acceptTermsOfUse();
+        registrationPage.confirmLostPasswordWarning();
+
         registrationPage.submitRegistration();
     }
 }

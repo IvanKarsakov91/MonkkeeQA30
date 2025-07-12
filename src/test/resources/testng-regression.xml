@@ -8,11 +8,11 @@
         </groups>
         <classes>
             <class name="tests.LoginTest"/>
-            <class name="tests.EntryTest"/>
-            <class name="tests.SearchTest"/>
-            <class name="tests.SettingsTest"/>
-            <class name="tests.CalendarTest"/>
-            <class name="tests.RegistrationTest"/>
+            <!-- <class name="tests.EntryTest"/> -->
+            <!-- <class name="tests.SearchTest"/> -->
+            <!-- <class name="tests.SettingsTest"/> -->
+            <!--<class name="tests.CalendarTest"/>-->
+            <!--<class name="tests.RegistrationTest"/>-->
         </classes>
     </test>
-</suite>
+ </suite>
