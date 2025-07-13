@@ -7,21 +7,28 @@ import static com.codeborne.selenide.Condition.*;
 
 public class Checkbox {
 
-    private final String id;
+    private final String selector;
 
-    public Checkbox(String id) {
-        this.id = id;
+    public Checkbox(String selector) {
+        this.selector = selector;
     }
 
     public void setCheckboxValue(boolean selected) {
-        SelenideElement checkbox = $("#" + id).shouldBe(visible, enabled).scrollTo();
+        SelenideElement checkbox = $(selector).shouldBe(visible, enabled).scrollTo();
         boolean isChecked = checkbox.isSelected();
-
-        if (selected && !isChecked) {
-            executeJavaScript("arguments[0].click();", checkbox);
-        } else if (!selected && isChecked) {
+        if (selected != isChecked) {
             executeJavaScript("arguments[0].click();", checkbox);
         }
     }
+
+    public void acceptTermsOfUse() {
+        setCheckboxValue(true);
+    }
+
+    public void acknowledgeLostPasswordWarning() {
+        setCheckboxValue(true);
+    }
 }
+
+
 

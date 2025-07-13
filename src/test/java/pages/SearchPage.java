@@ -2,23 +2,29 @@ package pages;
 
 import com.codeborne.selenide.SelenideElement;
 
+import static com.codeborne.selenide.Condition.*;
 import static com.codeborne.selenide.Selenide.*;
 
 public class SearchPage {
 
-    public SelenideElement searchField = $("#searchInput");
-    public SelenideElement searchButton = $("button[ng-click='searchEntries()']");
-    public SelenideElement resultContainer = $("#searchResults");
+    private final SelenideElement searchField = $("#searchInput");
+    private final SelenideElement searchButton = $("button[ng-click='searchEntries()']");
+    private final SelenideElement resultsBlock = $("#searchResults");
+    private final SelenideElement noResultsMessage = $("div.entries__none");
 
-    public void enterSearchQuery(String query) {
-        searchField.setValue(query);
+    public void setQuery(String query) {
+        searchField.shouldBe(visible, enabled).setValue(query);
     }
 
-    public void clickSearch() {
-        searchButton.click();
+    public void submitSearch() {
+        searchButton.shouldBe(visible, enabled).click();
     }
 
-    public boolean isResultVisible() {
-        return resultContainer.isDisplayed();
+    public boolean resultsVisible() {
+        return resultsBlock.should(appear).isDisplayed();
+    }
+
+    public boolean noEntriesVisible() {
+        return noResultsMessage.should(appear).isDisplayed();
     }
 }

@@ -1,16 +1,28 @@
 package tests;
 
+import io.qameta.allure.*;
 import org.testng.annotations.Test;
 import steps.SettingsSteps;
 
-public class SettingsTest {
+@Epic("5. Настройки")
+@Feature("5.1 Смена языка")
+public class SettingsTest extends BaseTest {
 
-    SettingsSteps settingsSteps = new SettingsSteps();
+    private final SettingsSteps settingsSteps = new SettingsSteps();
 
-    @Test(groups = {"regression"})
-    public void testChangeLanguageToFrench() {
+    @Test(
+            priority = 1,
+            groups = {"smoke"},
+            description = "5.1. Смена языка на немецкий"
+    )
+    @Story("5.1 Язык: Deutsch")
+    @Severity(SeverityLevel.CRITICAL)
+    public void testChangeLanguageToGerman() {
         settingsSteps.openSettings();
-        settingsSteps.changeLanguage("fr");
-        // Проверка, что язык изменён
+        settingsSteps.changeLanguage("de");
+        settingsSteps.verifyLanguageIsSet("de");
+
+        System.out.println(" Язык успешно установлен: Deutsch");
     }
 }
+

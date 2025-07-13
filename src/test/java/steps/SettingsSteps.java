@@ -3,9 +3,11 @@ package steps;
 import io.qameta.allure.Step;
 import pages.SettingsPage;
 
+import static com.codeborne.selenide.Condition.selected;
+
 public class SettingsSteps {
 
-    SettingsPage settingsPage = new SettingsPage();
+    private final SettingsPage settingsPage = new SettingsPage();
 
     @Step("Открыть настройки")
     public void openSettings() {
@@ -17,4 +19,10 @@ public class SettingsSteps {
         settingsPage.selectLanguage(languageCode);
         settingsPage.saveSettings();
     }
+
+    @Step("Проверить, что выбран язык: {languageCode}")
+    public void verifyLanguageIsSet(String languageCode) {
+        settingsPage.languageOption(languageCode).shouldBe(selected);
+    }
 }
+

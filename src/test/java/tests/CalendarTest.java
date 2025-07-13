@@ -12,7 +12,8 @@ public class CalendarTest extends BaseTest {
     public void testEntriesVisibleForSelectedDate() {
         Selenide.open("https://monkkee.com/app/#/entries");
         calendarSteps.openCalendar();
-        calendarSteps.selectDate("2025-07-07");
+        calendarSteps.selectDate("07/07/2025"); // формат: dd/MM/yyyy
         assert calendarSteps.isEntryVisibleForDate();
     }
 }
+

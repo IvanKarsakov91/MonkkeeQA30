@@ -2,23 +2,32 @@ package pages;
 
 import com.codeborne.selenide.SelenideElement;
 
+import static com.codeborne.selenide.Condition.*;
 import static com.codeborne.selenide.Selenide.*;
 
 public class SettingsPage {
 
-    public SelenideElement settingsButton = $("a[href*='settings']");
-    public SelenideElement languageDropdown = $("#language");
-    public SelenideElement saveButton = $("button[type='submit']");
+    private final SelenideElement settingsContainer =
+            $$("div.user-menu__btn").findBy(text("Settings"));
+
+    private final SelenideElement languageDropdown = $("select[name='selectLocale']");
+    private final SelenideElement saveButton = $("button[type='submit']");
 
     public void openSettings() {
-        settingsButton.click();
+        settingsContainer.shouldBe(visible, enabled).click();
     }
 
-    public void selectLanguage(String languageCode) {
-        languageDropdown.selectOptionByValue(languageCode); // "fr" для французского
+    public void selectLanguage(String code) {
+        languageDropdown.shouldBe(visible, enabled).selectOptionByValue(code);
+    }
+
+    public SelenideElement languageOption(String code) {
+        return languageDropdown.$("option[value='" + code + "']");
     }
 
     public void saveSettings() {
-        saveButton.click();
+        saveButton.shouldBe(visible, enabled).click();
     }
 }
+
+
