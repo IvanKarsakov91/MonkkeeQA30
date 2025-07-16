@@ -27,11 +27,8 @@ jobs:
           key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
           restore-keys: ${{ runner.os }}-m2
 
-      - name: Run Tests
-        run: mvn clean test
-
-      - name: Generate Allure Report
-        run: mvn verify
+      - name: Run Tests and Generate Allure
+        run: mvn clean verify
 
       - name: Upload Allure Report
         uses: actions/upload-artifact@v3
