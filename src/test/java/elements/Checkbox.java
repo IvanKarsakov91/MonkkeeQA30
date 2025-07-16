@@ -23,7 +23,7 @@ public class Checkbox {
 
         if (selected != isChecked) {
             executeJavaScript("arguments[0].click();", checkbox);
-            System.out.println("✅ Чекбокс переключён на: " + selected);
+            System.out.println(" Чекбокс переключён на: " + selected);
         } else {
             System.out.println("ℹ Чекбокс уже в нужном состоянии: " + selected);
         }
@@ -31,17 +31,14 @@ public class Checkbox {
 
     @Step("Принять условия использования")
     public void acceptTermsOfUse() {
-        System.out.println("📋 Принимаем условия использования");
+        System.out.println(" Принимаем условия использования");
         setCheckboxValue(true);
     }
 
     @Step("Подтвердить предупреждение о потерянном пароле")
     public void acknowledgeLostPasswordWarning() {
-        System.out.println("⚠ Подтверждаем предупреждение о потере пароля");
+        System.out.println(" Подтверждаем предупреждение о потере пароля");
         setCheckboxValue(true);
     }
 }
-
-
-
 

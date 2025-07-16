@@ -140,9 +140,8 @@ public class EntryPage {
 
     @Step("Тест пройден успешно")
     public void confirmTestSuccess() {
-        log.info("✅ Все шаги отработали, тест завершён успешно");
-        Allure.addAttachment("Статус", "✅ Тест завершён без ошибок");
+        log.info(" Все шаги отработали, тест завершён успешно");
+        Allure.addAttachment("Статус", " Тест завершён без ошибок");
     }
 }
-
 

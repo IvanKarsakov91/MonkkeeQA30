@@ -14,11 +14,12 @@ public class LanguageTest extends BaseTest {
     @Story("5.1 Язык: Deutsch — публичная страница")
     @Severity(SeverityLevel.CRITICAL)
     public void testSwitchToGermanWithoutLogin() {
-        languagePage.openLandingPage();            // 🔹 открываем https://monkkee.com/en
-        languagePage.openLanguageDropdown();       // 🔹 кликаем на language-switcher
-        languagePage.selectGerman();               // 🔹 выбираем Deutsch
+        languagePage.openLandingPage();
+        languagePage.openLanguageDropdown();
+        languagePage.selectGerman();
 
         assert languagePage.isGermanVersionOpened() :
                 "Не произошёл переход на /de — язык не переключился на Deutsch";
     }
 }
+

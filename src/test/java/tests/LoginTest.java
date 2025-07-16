@@ -19,8 +19,8 @@ public class LoginTest extends BaseTest {
     @Story("2.1. Валидные email и пароль")
     @Severity(SeverityLevel.CRITICAL)
     public void testSuccessfulLogin() {
-        User user = UserFactory.existingUser();                            // ✅
-        loginPage.loginWithValidUser(user);                                // ✅
+        User user = UserFactory.existingUser();
+        loginPage.loginWithValidUser(user);
 
         Assert.assertTrue(WebDriverRunner.url().contains("/#/entries"),
                 "После логина должен быть переход на /#/entries");
@@ -83,10 +83,4 @@ public class LoginTest extends BaseTest {
                 "После выхода не произошёл переход на /app/#/");
     }
 }
-
-
-
-
-
-
 

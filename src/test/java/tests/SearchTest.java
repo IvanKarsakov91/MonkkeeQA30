@@ -27,11 +27,11 @@ public class SearchTest extends BaseTest {
     public void testSearchEntryWith1111() {
         String searchTerm = "1111";
 
-        searchPage.createEntry(searchTerm);              // 📝 создаём запись
-        searchPage.search(searchTerm);                   // 🔍 ищем по запросу
-        searchPage.waitForSearchResults(1);              // ⏳ ждём появления результатов
+        searchPage.createEntry(searchTerm);
+        searchPage.search(searchTerm);
+        searchPage.waitForSearchResults(1);
 
-        assert searchPage.isEntryFound(searchTerm) :     // ✅ проверка наличия
+        assert searchPage.isEntryFound(searchTerm) :
                 "Запись '" + searchTerm + "' не найдена после поиска";
     }
 
@@ -41,8 +41,8 @@ public class SearchTest extends BaseTest {
     public void testSearchNonExistingEntry() {
         String invalidQuery = "non_existing_" + System.currentTimeMillis();
 
-        searchPage.search(invalidQuery);                 // 🔍 ищем по некорректному запросу
-        assert searchPage.isNoResultsShown() :           // ✅ проверка блока 'No entries found'
+        searchPage.search(invalidQuery);
+        assert searchPage.isNoResultsShown() :
                 "Сообщение о пустом результате не отображено";
     }
 }

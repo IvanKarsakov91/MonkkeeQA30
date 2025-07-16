@@ -29,14 +29,14 @@ public class SearchPage {
     public void createEntry(String text) {
         createEntryButton.shouldBe(visible, enabled).click();
 
-        editor.should(visible, Duration.ofSeconds(10));  // ✅ ожидание с таймаутом
+        editor.should(visible, Duration.ofSeconds(10));
         editor.shouldBe(enabled);
         editor.click();
 
-        editor.sendKeys(text);        // ⌨️ имитация ручного ввода
-        editor.pressEscape();         // 🔒 фиксируем изменение
+        editor.sendKeys(text);
+        editor.pressEscape();
 
-        sleep(1000);                  // ⏳ подстраховка для сохранения
+        sleep(1000);
 
         overviewButton.shouldBe(visible, enabled).click();
         log.info("Создана запись с текстом: {}", text);

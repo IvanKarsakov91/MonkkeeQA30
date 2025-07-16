@@ -11,18 +11,18 @@ public class BasePage {
 
     public String getCurrentUrl() {
         String url = WebDriverRunner.url();
-        log.info("🌍 Текущий URL: {}", url);
+        log.info(" Текущий URL: {}", url);
         return url;
     }
 
     public WebDriver getDriver() {
         WebDriver driver = WebDriverRunner.getWebDriver();
-        log.info("🖥️ WebDriver получен: {}", driver.getClass().getSimpleName());
+        log.info(" WebDriver получен: {}", driver.getClass().getSimpleName());
         return driver;
     }
 
     public void refreshPage() {
-        log.info("🔄 Обновление страницы");
+        log.info(" Обновление страницы");
         getDriver().navigate().refresh();
     }
 }
