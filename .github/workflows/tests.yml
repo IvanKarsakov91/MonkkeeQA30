@@ -20,9 +20,6 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
 
-      - name: Set up Maven
-        run: sudo apt-get install maven -y
-
       - name: Cache Maven packages
         uses: actions/cache@v3
         with:
@@ -34,7 +31,7 @@ jobs:
         run: mvn clean test
 
       - name: Generate Allure Report
-        run: mvn allure:report
+        run: mvn verify
 
       - name: Upload Allure Report
         uses: actions/upload-artifact@v3
