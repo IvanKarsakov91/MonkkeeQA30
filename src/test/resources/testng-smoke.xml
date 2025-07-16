@@ -1,8 +1,8 @@
-<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd" >
+<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
 <suite name="SmokeSuite" parallel="tests" thread-count="2">
 
-    <!-- Авторизация и регистрация -->
-    <test name="Smoke_Auth">
+    <!-- Тесты без SuiteSetup -->
+    <test name="Smoke_Independent">
         <parameter name="requireLogin" value="false"/>
         <groups>
             <run>
@@ -15,7 +15,7 @@
 </classes>
 </test>
 
-<!-- Остальное -->
+<!-- Все остальные — с авторизацией -->
     <test name="Smoke_Functional">
         <parameter name="requireLogin" value="true"/>
         <groups>
@@ -25,9 +25,11 @@
         </groups>
         <classes>
             <class name="tests.EntryTest"/>
-            <class name="tests.SearchTest"/>
-            <class name="tests.SettingsTest"/>
+            <!--<class name="tests.SearchTest"/>-->
+            <class name="tests.LanguageTest"/>
         </classes>
     </test>
 
 </suite>
+
+

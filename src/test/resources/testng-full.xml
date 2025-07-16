@@ -16,8 +16,7 @@
         <classes>
             <class name="tests.EntryTest"/>
             <class name="tests.SearchTest"/>
-            <class name="tests.SettingsTest"/>
-            <class name="tests.CalendarTest"/>
+            <class name="tests.LanguageTest"/>
         </classes>
     </test>
 

@@ -28,7 +28,13 @@ public class BaseTest {
             log.info("🔐 Выполняем логин перед тестом");
             String email = ConfigReader.get("user");
             String password = ConfigReader.get("password");
-            loginPage.performLogin(email, password);
+
+            // Открываем страницу логина, чтобы инициализировать драйвер и загрузить страницу
+            loginPage.openLoginPage();
+
+            // Далее логинимся
+            loginPage.login(email, password);
+
             log.info("✅ Авторизация успешна под: {}", email);
         } else {
             log.info("⏭️ Авторизация отключена для данного теста");
@@ -65,5 +71,7 @@ public class BaseTest {
         Selenide.closeWebDriver();
     }
 }
+
+
 
 

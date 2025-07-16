@@ -22,19 +22,12 @@ public class LoginPage {
     private final SelenideElement passwordField = $("#password");
     private final SelenideElement loginButton = $("button[type='submit']");
     private final SelenideElement reminderLink = $("a[href*='password_reminder']");
+    private final SelenideElement goToEntriesLink = $("a[href='#/entries']");
 
     public void openLoginPage() {
         open(loginUrl);
-
-        if (!emailField.exists()) {
-            log.error("Элемент #login отсутствует. Страница не прогрузилась или структура изменилась.");
-            Allure.addAttachment("Ошибка логина", "Элемент #login отсутствует на " + loginUrl);
-            throw new IllegalStateException("Поле логина не найдено.");
-        }
-
-        emailField.shouldBe(visible, Duration.ofSeconds(15)).shouldBe(enabled);
-        passwordField.shouldBe(visible, Duration.ofSeconds(15)).shouldBe(enabled);
-
+        emailField.should(exist, Duration.ofSeconds(15)).shouldBe(visible, enabled);
+        passwordField.should(exist, Duration.ofSeconds(15)).shouldBe(visible, enabled);
         log.info("Страница логина загружена: {}", loginUrl);
         Allure.addAttachment("Login URL", loginUrl);
     }
@@ -42,37 +35,21 @@ public class LoginPage {
     public void login(String email, String password) {
         emailField.setValue(email);
         passwordField.setValue(password);
-        loginButton.shouldBe(visible, Duration.ofSeconds(10)).click();
-
+        loginButton.shouldBe(visible).click();
         log.info("Попытка логина: {}", email);
         Allure.addAttachment("Попытка логина", email);
     }
 
-    public void loginWithValidUser(User user) {
-        openLoginPage();
-        login(user.getEmail(), user.getPassword());
-
-        log.info("Логин через объект User: {}", user.getEmail());
-        Allure.addAttachment("Логин через User", user.getEmail());
-    }
-
-    public void performLogin(String email, String password) {
-        openLoginPage();
-        login(email, password);
-
-        for (int i = 0; i < 30; i++) {
-            if (WebDriverRunner.url().contains(successRedirectUrl)) {
-                log.info("Авторизация успешна. Перешли на {}", WebDriverRunner.url());
-                Allure.addAttachment("Успешный редирект", WebDriverRunner.url());
-                return;
-            }
-            sleep(300);
+    public void navigateToEntries() {
+        goToEntriesLink.shouldBe(exist, Duration.ofSeconds(15));
+        if (goToEntriesLink.isDisplayed() && goToEntriesLink.getSize().getHeight() > 0) {
+            goToEntriesLink.click();
+            log.info("Нажата ссылка 'Go to your entries'");
+            Allure.addAttachment("Переход на entries", WebDriverRunner.url());
+        } else {
+            log.warn("Ссылка 'Go to your entries' неактивна — пропускаем клик");
+            Allure.addAttachment("Состояние ссылки", "Ссылка неактивна или имеет нулевой размер");
         }
-
-        String currentUrl = WebDriverRunner.url();
-        log.error("Редирект не выполнен. Текущий URL: {}", currentUrl);
-        Allure.addAttachment("Ошибка авторизации", currentUrl);
-        throw new IllegalStateException("Редирект на /#/entries не произошёл.");
     }
 
     public boolean verifyRedirectToEntries() {
@@ -83,9 +60,24 @@ public class LoginPage {
         return false;
     }
 
+    public void performLoginAndGoToEntries(String email, String password) {
+        openLoginPage();
+        login(email, password);
+        navigateToEntries();
+        if (!verifyRedirectToEntries()) {
+            String currentUrl = WebDriverRunner.url();
+            log.error("Редирект на entries не произошёл. Текущий URL: {}", currentUrl);
+            Allure.addAttachment("Ошибка редиректа", currentUrl);
+            throw new IllegalStateException("Редирект на /#/entries не произошёл.");
+        }
+    }
+
+    public void loginWithValidUser(User user) {
+        performLoginAndGoToEntries(user.getEmail(), user.getPassword());
+    }
+
     public void openPasswordReminder() {
         reminderLink.shouldBe(visible, Duration.ofSeconds(10)).click();
-
         log.info("Открыта форма восстановления пароля");
         Allure.addAttachment("Password Reminder", WebDriverRunner.url());
     }
@@ -94,10 +86,32 @@ public class LoginPage {
         refresh();
         log.info("Страница логина вручную обновлена");
     }
+
+    public void logout() {
+        SelenideElement logoutLabel = $$("span.user-menu__btn-label").findBy(text("Logout"));
+
+        if (logoutLabel.exists()) {
+            logoutLabel.should(visible, Duration.ofSeconds(10)).click(); // ✅ фикс: используем should(..., Duration)
+            log.info("Нажата кнопка 'Logout'");
+            Allure.addAttachment("Выход из аккаунта", "Кнопка Logout нажата");
+        } else {
+            log.warn("Кнопка 'Logout' не найдена — пользователь, возможно, не авторизован");
+            Allure.addAttachment("Ошибка выхода", "Кнопка Logout отсутствует");
+            throw new IllegalStateException("Logout недоступен — пользователь не залогинен?");
+        }
+    }
+
+    public boolean verifyRedirectToLoginPage() {
+        for (int i = 0; i < 30; i++) {
+            if (WebDriverRunner.url().endsWith("/#/")) {
+                log.info("Редирект подтверждён на /#/");
+                Allure.addAttachment("Redirect after logout", WebDriverRunner.url());
+                return true;
+            }
+            sleep(300);
+        }
+        log.warn("Редирект на /#/ не выполнен");
+        return false;
+    }
 }
-
-
-
-
-
 

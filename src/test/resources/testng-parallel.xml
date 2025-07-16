@@ -1,4 +1,4 @@
-<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd" >
+<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
 <suite name="ParallelBrowsers" parallel="tests" thread-count="2">
 
     <listeners>
@@ -9,6 +9,10 @@
         <parameter name="browser" value="chrome"/>
         <classes>
             <class name="tests.RegistrationTest"/>
+            <class name="tests.LoginTest"/>
+            <class name="tests.EntryTest"/>
+            <class name="tests.SearchTest"/>
+            <class name="tests.LanguageTest"/>
         </classes>
     </test>
 
@@ -16,6 +20,10 @@
         <parameter name="browser" value="firefox"/>
         <classes>
             <class name="tests.RegistrationTest"/>
+            <class name="tests.LoginTest"/>
+            <class name="tests.EntryTest"/>
+            <class name="tests.SearchTest"/>
+            <class name="tests.LanguageTest"/>
         </classes>
     </test>
 

@@ -1,6 +1,7 @@
 package factories;
 
 import com.github.javafaker.Faker;
+import config.TestConfig;
 import io.qameta.allure.Allure;
 import io.qameta.allure.Step;
 import models.User;
@@ -20,7 +21,7 @@ public class UserFactory {
 
         User user = new User(email, password, password, hint);
         log.info("Сгенерирован валидный пользователь: {}", email);
-        Allure.addAttachment("Пользователь", email);
+        Allure.addAttachment("Пользователь (валидный)", email);
         return user;
     }
 
@@ -28,7 +29,7 @@ public class UserFactory {
     public static User emptyUser() {
         User user = new User("", "", "", "");
         log.info("Сгенерирован пустой пользователь");
-        Allure.addAttachment("Пользователь", "Пустой");
+        Allure.addAttachment("Пользователь (пустой)", "—");
         return user;
     }
 
@@ -39,23 +40,24 @@ public class UserFactory {
         String hint = faker.lorem().word();
 
         User user = new User(email, password, "", hint);
-        log.info("Сгенерирован пользователь без подтверждения пароля: {}", email);
-        Allure.addAttachment("Пользователь", email);
+        log.info("Сгенерирован пользователь без подтверждения: {}", email);
+        Allure.addAttachment("Пользователь (без подтверждения)", email);
         return user;
     }
 
-    @Step("Подключение существующего пользователя")
+    @Step("Подключение существующего пользователя из config.properties")
     public static User existingUser() {
-        // ⚠️ Убедись, что такой пользователь реально существует в Monkkee
-        String email = "ivan.test.qa@example.com";
-        String password = "SecurePassword123!";
-        String hint = "Мой боевой пароль";
+        String email = TestConfig.getUserEmail();
+        String password = TestConfig.getUserPassword();
+        String confirmation = TestConfig.getPasswordConfirmation();
+        String hint = TestConfig.getPasswordHint() != null ? TestConfig.getPasswordHint() : "Пароль записан";
 
-        User user = new User(email, password, password, hint);
-        log.info("Используется заранее зарегистрированный пользователь: {}", email);
-        Allure.addAttachment("Существующий пользователь", email);
+        User user = new User(email, password, confirmation, hint);
+        log.info("Используется пользователь из config.properties: {}", email);
+        Allure.addAttachment("Пользователь (из конфигурации)", email);
         return user;
     }
 }
+
 
 

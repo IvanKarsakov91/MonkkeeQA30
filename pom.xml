@@ -14,7 +14,7 @@
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
 
-        <!-- Versions -->
+        <!-- Версии -->
         <selenide.version>7.0.4</selenide.version>
         <testng.version>7.9.0</testng.version>
         <allure.version>2.24.0</allure.version>
@@ -24,10 +24,6 @@
         <lombok.version>1.18.32</lombok.version>
         <surefire.version>3.2.2</surefire.version>
         <log4j.version>2.22.1</log4j.version>
-
-        <!-- Allure -->
-        <allure.results.directory>target/allure-results</allure.results.directory>
-        <allure.report.directory>target/site/allure-maven-plugin</allure.report.directory>
     </properties>
 
     <dependencies>
@@ -46,12 +42,14 @@
             <scope>test</scope>
         </dependency>
 
-        <!-- Allure -->
+        <!-- Allure TestNG -->
         <dependency>
             <groupId>io.qameta.allure</groupId>
             <artifactId>allure-testng</artifactId>
             <version>${allure.version}</version>
         </dependency>
+
+        <!-- Allure Commons -->
         <dependency>
             <groupId>io.qameta.allure</groupId>
             <artifactId>allure-java-commons</artifactId>
@@ -63,6 +61,12 @@
             <groupId>org.assertj</groupId>
             <artifactId>assertj-core</artifactId>
             <version>${assertj.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-simple</artifactId> <!-- или slf4j-log4j12 -->
+            <version>2.0.9</version>
         </dependency>
 
         <!-- Java Faker -->
@@ -95,7 +99,7 @@
 
     <build>
         <plugins>
-            <!-- Lombok support -->
+            <!-- Lombok annotation processor -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -111,7 +115,7 @@
                 </configuration>
             </plugin>
 
-            <!-- Test execution -->
+            <!-- Surefire plugin для запуска тестов -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
@@ -132,7 +136,7 @@
                 </configuration>
             </plugin>
 
-            <!-- Allure plugin with report goal -->
+            <!-- Allure Maven Plugin для отчётов -->
             <plugin>
                 <groupId>io.qameta.allure</groupId>
                 <artifactId>allure-maven</artifactId>
@@ -149,5 +153,4 @@
             </plugin>
         </plugins>
     </build>
-
 </project>
