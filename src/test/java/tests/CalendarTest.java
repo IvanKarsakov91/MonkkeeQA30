@@ -1,19 +1,19 @@
 package tests;
 
-import com.codeborne.selenide.Selenide;
 import org.testng.annotations.Test;
-import steps.CalendarSteps;
+import pages.CalendarPage;
 
 public class CalendarTest extends BaseTest {
 
-    private final CalendarSteps calendarSteps = new CalendarSteps();
+    private final CalendarPage calendarPage = new CalendarPage();
 
     @Test(groups = {"regression"})
     public void testEntriesVisibleForSelectedDate() {
-        Selenide.open("https://monkkee.com/app/#/entries");
-        calendarSteps.openCalendar();
-        calendarSteps.selectDate("07/07/2025"); // формат: dd/MM/yyyy
-        assert calendarSteps.isEntryVisibleForDate();
+        calendarPage.start();
+        calendarPage.openCalendar();
+        calendarPage.selectDate("07/07/2025");
+        assert calendarPage.isEntryVisibleForDate();
     }
 }
+
 

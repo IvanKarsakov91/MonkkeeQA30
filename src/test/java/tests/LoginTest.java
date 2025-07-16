@@ -2,18 +2,14 @@ package tests;
 
 import com.codeborne.selenide.WebDriverRunner;
 import io.qameta.allure.*;
+import org.testng.Assert;
 import org.testng.annotations.Test;
 import pages.LoginPage;
-import steps.LoginSteps;
-
-import static com.codeborne.selenide.Condition.*;
-import static com.codeborne.selenide.Selenide.*;
 
 @Epic("2. Авторизация пользователя")
 @Feature("2.0. Проверка формы логина")
 public class LoginTest extends BaseTest {
 
-    LoginSteps loginSteps = new LoginSteps();
     LoginPage loginPage = new LoginPage();
 
     @Test(
@@ -24,10 +20,11 @@ public class LoginTest extends BaseTest {
     @Story("2.1. Валидные email и пароль")
     @Severity(SeverityLevel.CRITICAL)
     public void testSuccessfulLogin() {
-        loginSteps.openLoginPage();
-        loginSteps.login("ivankarsakov91@gmail.com", "karsakov91");
-        $("body").shouldHave(text("You are logged in as ivankarsakov91@gmail.com."));
-        System.out.println("✔ Авторизация подтверждена");
+        loginPage.openLoginPage();
+        loginPage.login("ivankarsakov91@gmail.com", "karsakov91");
+
+        Assert.assertTrue(loginPage.verifyRedirectToEntries(),
+                "После логина не выполнен переход на /#/entries");
     }
 
     @Test(
@@ -38,10 +35,10 @@ public class LoginTest extends BaseTest {
     @Story("2.2. Пустые email и пароль")
     @Severity(SeverityLevel.NORMAL)
     public void testLoginWithEmptyFields() {
-        loginSteps.openLoginPage();
-        loginSteps.login("", "");
-        $("body").shouldNotHave(text("You are logged in as"));
-        System.out.println("✔ Вход не выполнен — пустые поля");
+        loginPage.openLoginPage();
+        loginPage.login("", "");
+        Assert.assertFalse(loginPage.verifyRedirectToEntries(),
+                "Не должен происходить переход при пустых данных");
     }
 
     @Test(
@@ -52,10 +49,10 @@ public class LoginTest extends BaseTest {
     @Story("2.3. Пустой пароль")
     @Severity(SeverityLevel.NORMAL)
     public void testLoginWithEmptyPassword() {
-        loginSteps.openLoginPage();
-        loginSteps.login("user@mail.com", "");
-        $("body").shouldNotHave(text("You are logged in as"));
-        System.out.println("✔ Вход не выполнен — пустой пароль");
+        loginPage.openLoginPage();
+        loginPage.login("user@mail.com", "");
+        Assert.assertFalse(loginPage.verifyRedirectToEntries(),
+                "Не должен происходить переход при пустом пароле");
     }
 
     @Test(
@@ -66,10 +63,10 @@ public class LoginTest extends BaseTest {
     @Story("2.4. Пустой email")
     @Severity(SeverityLevel.NORMAL)
     public void testLoginWithEmptyEmail() {
-        loginSteps.openLoginPage();
-        loginSteps.login("", "Password123");
-        $("body").shouldNotHave(text("You are logged in as"));
-        System.out.println("✔ Вход не выполнен — пустой email");
+        loginPage.openLoginPage();
+        loginPage.login("", "Password123");
+        Assert.assertFalse(loginPage.verifyRedirectToEntries(),
+                "Не должен происходить переход при пустом email");
     }
 
     @Test(
@@ -80,10 +77,12 @@ public class LoginTest extends BaseTest {
     @Story("2.5. Ссылка на восстановление пароля")
     @Severity(SeverityLevel.MINOR)
     public void testPasswordReminder() {
-        loginSteps.openLoginPage();
-        $("a[href*='password_reminder']").shouldBe(visible, enabled).click();
-        WebDriverRunner.url().contains("/account/password_reminder");
-        System.out.println("✔ Переход на восстановление пароля");
+        loginPage.openLoginPage();
+        loginPage.openPasswordReminder();
+        Assert.assertTrue(WebDriverRunner.url().contains("password_reminder"),
+                "Не выполнен переход на восстановление пароля");
     }
 }
+
+
 

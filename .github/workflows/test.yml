@@ -1,4 +1,4 @@
-name: Run Monkkee Tests (Maven)
+name: Run Tests with Allure Report
 
 on:
   push:
@@ -11,21 +11,33 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: 📥 Checkout repository
+      - name: Checkout repo
         uses: actions/checkout@v3
 
-      - name: ☕ Set up JDK 17
+      - name: Set up Java
         uses: actions/setup-java@v3
         with:
           distribution: 'temurin'
           java-version: '17'
 
-      - name: 🧪 Run TestNG tests via Maven
+      - name: Set up Maven
+        run: sudo apt-get install maven -y
+
+      - name: Cache Maven packages
+        uses: actions/cache@v3
+        with:
+          path: ~/.m2
+          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+          restore-keys: ${{ runner.os }}-m2
+
+      - name: Run Tests
         run: mvn clean test
 
-      - name: 📤 Upload test results (Surefire Report)
-        if: always()
+      - name: Generate Allure Report
+        run: mvn allure:report
+
+      - name: Upload Allure Report
         uses: actions/upload-artifact@v3
         with:
-          name: surefire-reports
-          path: target/surefire-reports/
+          name: allure-report
+          path: target/site/allure-maven-plugin

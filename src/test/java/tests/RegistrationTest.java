@@ -1,66 +1,63 @@
 package tests;
 
-import com.codeborne.selenide.WebDriverRunner;
+import factories.UserFactory;
 import io.qameta.allure.*;
 import models.User;
+import org.testng.Assert;
 import org.testng.annotations.Test;
 import pages.RegistrationPage;
-import steps.RegistrationSteps;
-import utils.ConfigReader;
-import factories.UserFactory;
 
-import static com.codeborne.selenide.Selenide.*;
-import static com.codeborne.selenide.Condition.*;
-
-@Epic("1. Регистрация пользователя")
-@Feature("1.0. Проверка формы регистрации")
+@Epic("3. Регистрация нового пользователя")
+@Feature("3.0. Проверка формы регистрации")
 public class RegistrationTest extends BaseTest {
 
-    RegistrationSteps registrationSteps = new RegistrationSteps();
-    RegistrationPage registrationPage = new RegistrationPage();
+    private final RegistrationPage registrationPage = new RegistrationPage();
 
     @Test(
             groups = {"smoke"},
-            retryAnalyzer = listeners.RetryAnalyzer.class,
-            description = "1.1. Успешная регистрация с валидными данными"
+            description = "3.1. Успешная регистрация с валидными данными"
     )
-    @Story("1.1. Валидные данные")
+    @Story("3.1. Валидная регистрация")
     @Severity(SeverityLevel.CRITICAL)
     public void testSuccessfulRegistration() {
         User user = UserFactory.validUser();
-        registrationSteps.registerUserWithValidData(ConfigReader.get("registrationUrl"), user);
 
-        // Проверка: редирект на страницу записей
-        assert WebDriverRunner.url().contains("/entries");
+        registrationPage.openRegistrationPage();
+        registrationPage.registerWithValidData(user);
+
+        Assert.assertTrue(registrationPage.isUserRegisteredMessageVisible(),
+                "Сообщение 'User registered' не отображается");
     }
 
     @Test(
             groups = {"regression"},
-            retryAnalyzer = listeners.RetryAnalyzer.class,
-            description = "1.2. Пустые все поля формы регистрации"
+            description = "3.2. Регистрация без подтверждения пароля"
     )
-    @Story("1.2. Пустая форма")
+    @Story("3.2. Несовпадающие пароли")
     @Severity(SeverityLevel.NORMAL)
-    public void testRegistrationWithEmptyFields() {
-        open(ConfigReader.get("registrationUrl"));
-        registrationPage.checkTerms();
-        registrationPage.checkPasswordWarning();
-
-        registrationPage.getRegisterButton().shouldBe(visible).shouldBe(disabled);
-        assert WebDriverRunner.url().contains("/account/registration");
-    }
-
-    @Test(
-            groups = {"regression"},
-            retryAnalyzer = listeners.RetryAnalyzer.class,
-            description = "1.3. Отсутствие подтверждения пароля"
-    )
-    @Story("1.3. Нет подтверждения")
-    @Severity(SeverityLevel.NORMAL)
-    public void testMissingPasswordConfirmation() {
+    public void testRegistrationWithoutPasswordConfirmation() {
         User user = UserFactory.userWithoutConfirmation();
-        registrationSteps.registerUserWithoutConfirmation(ConfigReader.get("registrationUrl"), user);
 
-        $("body").shouldHave(text("Password confirmation doesn’t match"));
+        registrationPage.openRegistrationPage();
+        registrationPage.registerWithoutConfirmation(user);
+
+        Assert.assertTrue(registrationPage.hasPasswordConfirmationError(),
+                "Ошибка несоответствия пароля не отображается");
+    }
+
+    @Test(
+            groups = {"regression"},
+            description = "3.3. Кнопка отключена при незаполненной форме"
+    )
+    @Story("3.3. Пустая форма регистрации")
+    @Severity(SeverityLevel.MINOR)
+    public void testDisabledButtonOnEmptyForm() {
+        registrationPage.openRegistrationPage();
+        registrationPage.checkOnlyCheckboxes();
+
+        Assert.assertTrue(registrationPage.isRegisterButtonDisabled(),
+                "Кнопка регистрации должна быть неактивна при незаполненной форме");
     }
 }
+
+

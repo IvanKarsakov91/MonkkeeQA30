@@ -3,23 +3,40 @@ package tests;
 import com.codeborne.selenide.Configuration;
 import com.codeborne.selenide.Selenide;
 import io.qameta.allure.Step;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.testng.annotations.*;
-import steps.LoginSteps;
+import pages.LoginPage;
 import utils.ConfigReader;
 
 public class BaseTest {
 
-    private static final Logger logger = LoggerFactory.getLogger(BaseTest.class);
-    protected LoginSteps loginSteps = new LoginSteps();
+    private static final Logger log = LogManager.getLogger(BaseTest.class);
+    protected LoginPage loginPage = new LoginPage();
 
     @Parameters({"browser", "requireLogin"})
     @BeforeMethod(alwaysRun = true)
+    @Step("Настройка окружения перед тестом")
     public void setupAndMaybeLogin(
             @Optional String browserParam,
             @Optional("true") String requireLoginParam
     ) {
+        configureBrowser(browserParam);
+
+        boolean requireLogin = Boolean.parseBoolean(requireLoginParam);
+        if (requireLogin) {
+            log.info("🔐 Выполняем логин перед тестом");
+            String email = ConfigReader.get("user");
+            String password = ConfigReader.get("password");
+            loginPage.performLogin(email, password);
+            log.info("✅ Авторизация успешна под: {}", email);
+        } else {
+            log.info("⏭️ Авторизация отключена для данного теста");
+        }
+    }
+
+    @Step("Настройка браузера: {browserParam}")
+    private void configureBrowser(String browserParam) {
         String browser = (browserParam != null && !browserParam.isBlank())
                 ? browserParam
                 : ConfigReader.get("browser");
@@ -36,28 +53,17 @@ public class BaseTest {
         Configuration.browserSize = "1920x1080";
         Configuration.timeout = 6000;
         Configuration.headless = Boolean.parseBoolean(ConfigReader.get("headless"));
-        Configuration.pageLoadStrategy = "normal";
 
-        logger.info("Запущен браузер: " + Configuration.browser);
-        logger.info("Headless режим: " + Configuration.headless);
-
-        boolean requireLogin = Boolean.parseBoolean(requireLoginParam);
-        if (requireLogin) {
-            logger.info("→ Выполняем логин перед тестом");
-            loginSteps.performLogin("ivankarsakov91@gmail.com", "karsakov91");
-            logger.info("→ Успешный вход");
-        } else {
-            logger.info("→ Логин не требуется для данного теста");
-        }
+        log.info("🧭 Браузер: {}", Configuration.browser);
+        log.info("🕶️ Headless: {}", Configuration.headless);
     }
 
     @AfterMethod(alwaysRun = true)
+    @Step("Завершение теста")
     public void tearDownAfterTest() {
-        logger.info("Закрытие браузера");
+        log.info("🧹 Закрытие браузера после теста");
         Selenide.closeWebDriver();
     }
 }
-
-
 
 

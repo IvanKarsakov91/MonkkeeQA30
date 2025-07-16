@@ -10,9 +10,9 @@
             </run>
         </groups>
         <classes>
-    <!-- <class name="tests.LoginTest"/>-->
-     <!--<class name="tests.RegistrationTest"/>-->
- </classes>
+            <!--<class name="tests.LoginTest"/>-->
+    <!--<class name="tests.RegistrationTest"/>-->
+</classes>
 </test>
 
 <!-- Остальное -->
@@ -24,9 +24,9 @@
             </run>
         </groups>
         <classes>
-            <!--<class name="tests.EntryTest"/>-->
+            <class name="tests.EntryTest"/>
             <!--<class name="tests.SearchTest"/>-->
-            <class name="tests.SettingsTest"/>
+            <!--<class name="tests.SettingsTest"/>-->
         </classes>
     </test>
 
