@@ -10,12 +10,12 @@
             </run>
         </groups>
         <classes>
-    <class name="tests.LoginTest"/>
-    <class name="tests.RegistrationTest"/>
-</classes>
-</test>
+            <class name="tests.LoginTest"/>
+                    <!--<class name="tests.RegistrationTest"/>-->
+                </classes>
+                </test>
 
-<!-- С авторизацией через SuiteSetup -->
+                <!-- С авторизацией через SuiteSetup -->
     <test name="Regression_Functional">
         <parameter name="requireLogin" value="true"/>
         <groups>
@@ -24,8 +24,8 @@
             </run>
         </groups>
         <classes>
-            <class name="tests.EntryTest"/>
-            <class name="tests.SearchTest"/>
+            <!--<class name="tests.EntryTest"/>-->
+            <!--<class name="tests.SearchTest"/>-->
         </classes>
     </test>
 

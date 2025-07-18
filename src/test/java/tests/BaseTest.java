@@ -25,19 +25,16 @@ public class BaseTest {
 
         boolean requireLogin = Boolean.parseBoolean(requireLoginParam);
         if (requireLogin) {
-            log.info(" Выполняем логин перед тестом");
+            log.info("Выполняем логин перед тестом");
             String email = ConfigReader.get("user");
             String password = ConfigReader.get("password");
 
-            // Открываем страницу логина, чтобы инициализировать драйвер и загрузить страницу
             loginPage.openLoginPage();
-
-            // Далее логинимся
             loginPage.login(email, password);
 
-            log.info(" Авторизация успешна под: {}", email);
+            log.info("Авторизация успешна под: {}", email);
         } else {
-            log.info(" Авторизация отключена для данного теста");
+            log.info("Авторизация отключена для данного теста");
         }
     }
 
@@ -49,26 +46,31 @@ public class BaseTest {
 
         switch (browser.toLowerCase()) {
             case "chrome":
-            case "firefox":
-                Configuration.browser = browser;
+                Configuration.browser = "chrome";
+                break;
+            case "edge":
+                System.setProperty("webdriver.edge.driver", "C:\\Users\\SofIvDar\\Downloads\\edgedriver_win32\\msedgedriver.exe");
+                Configuration.browser = "edge";
                 break;
             default:
                 throw new IllegalArgumentException("Неизвестный браузер: " + browser);
         }
 
-        Configuration.browserSize = "1920x1080";
+        Configuration.browserSize = "1280x800";
         Configuration.timeout = 6000;
         Configuration.headless = Boolean.parseBoolean(ConfigReader.get("headless"));
 
-        log.info(" Браузер: {}", Configuration.browser);
-        log.info(" Headless: {}", Configuration.headless);
+        log.info("Браузер: {}", Configuration.browser);
+        log.info("Headless: {}", Configuration.headless);
+        log.info("Размер окна: {}", Configuration.browserSize);
     }
 
     @AfterMethod(alwaysRun = true)
     @Step("Завершение теста")
     public void tearDownAfterTest() {
-        log.info(" Закрытие браузера после теста");
+        log.info("Закрытие браузера после теста");
         Selenide.closeWebDriver();
     }
 }
+
 

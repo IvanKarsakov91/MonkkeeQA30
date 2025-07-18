@@ -2,7 +2,6 @@ package pages;
 
 import com.codeborne.selenide.ElementsCollection;
 import com.codeborne.selenide.SelenideElement;
-import io.qameta.allure.Allure;
 import io.qameta.allure.Step;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -29,18 +28,17 @@ public class SearchPage {
     public void createEntry(String text) {
         createEntryButton.shouldBe(visible, enabled).click();
 
-        editor.should(visible, Duration.ofSeconds(10));
-        editor.shouldBe(enabled);
-        editor.click();
+        sleep(700);
 
+        editor.should(visible, Duration.ofSeconds(10)).shouldBe(enabled);
+        editor.click();
         editor.sendKeys(text);
         editor.pressEscape();
 
-        sleep(1000);
+        sleep(700);
 
         overviewButton.shouldBe(visible, enabled).click();
         log.info("Создана запись с текстом: {}", text);
-        Allure.addAttachment("Созданный текст", text);
     }
 
     @Step("Ищем запись по запросу: {query}")
@@ -48,14 +46,12 @@ public class SearchPage {
         searchInput.shouldBe(visible, enabled).click();
         searchInput.setValue(query).pressEnter();
         log.info("Выполнен поиск по запросу: {}", query);
-        Allure.addAttachment("Поисковый запрос", query);
     }
 
     @Step("Ожидание появления как минимум {minCount} результатов поиска")
     public void waitForSearchResults(int minCount) {
         entryLinks.shouldHave(sizeGreaterThanOrEqual(minCount), TIMEOUT);
         log.info("Ожидание завершено — найдено минимум {} результатов", minCount);
-        Allure.addAttachment("Найдено записей", String.valueOf(entryLinks.size()));
     }
 
     @Step("Проверяем, что найдена запись с текстом: {text}")
@@ -64,7 +60,6 @@ public class SearchPage {
         boolean found = entryLinks.asFixedIterable().stream()
                 .anyMatch(e -> e.getText().contains(text));
         log.info("Поиск по тексту '{}' — результат: {}", text, found);
-        Allure.addAttachment("Результат поиска", "Найдено: " + found);
         return found;
     }
 
@@ -73,7 +68,9 @@ public class SearchPage {
         noResultsBlock.shouldBe(visible, TIMEOUT);
         boolean shown = noResultsBlock.has(text("No entries found"));
         log.info("Сообщение 'No entries found' отображено: {}", shown);
-        Allure.addAttachment("Пустой результат", "Показано: " + shown);
         return shown;
     }
 }
+
+
+

@@ -29,10 +29,13 @@ public class EntryTest extends BaseTest {
     public void testDeleteEntry() {
         entryPage.goToEntriesPage();
         entryPage.createEntry();
-        entryPage.deleteEntryWithSystemAlert();
-        entryPage.waitForAllEntriesToDisappear();
+        entryPage.waitForEntriesToAppear(1);
 
-        assert entryPage.getEntryCount() == 0 : "Запись не была удалена";
+        int beforeCount = entryPage.getEntryCount();
+        entryPage.deleteEntryWithSystemAlert();
+        entryPage.waitForEntriesToReduceByOne(beforeCount);
+
+        assert entryPage.getEntryCount() == beforeCount - 1 : "Запись не была удалена";
         entryPage.confirmTestSuccess();
     }
 
@@ -56,4 +59,5 @@ public class EntryTest extends BaseTest {
         entryPage.confirmTestSuccess();
     }
 }
+
 

@@ -3,7 +3,6 @@ package pages;
 import com.codeborne.selenide.SelenideElement;
 import com.codeborne.selenide.WebDriverRunner;
 import elements.Checkbox;
-import io.qameta.allure.Allure;
 import io.qameta.allure.Step;
 import models.User;
 import org.apache.logging.log4j.LogManager;
@@ -31,7 +30,6 @@ public class RegistrationPage {
     public void openRegistrationPage() {
         open(registrationUrl);
         log.info("Открыта страница регистрации: {}", registrationUrl);
-        Allure.addAttachment("Registration URL", registrationUrl);
     }
 
     @Step("Регистрируем пользователя с валидными данными")
@@ -49,7 +47,6 @@ public class RegistrationPage {
         registerButton.click();
 
         log.info("Форма отправлена для: {}", user.getEmail());
-        Allure.addAttachment("Отправка формы", user.getEmail());
 
         waitForRegisteredPage();
     }
@@ -68,7 +65,6 @@ public class RegistrationPage {
         registerButton.click();
 
         log.info("Форма без подтверждения пароля отправлена для: {}", user.getEmail());
-        Allure.addAttachment("Без подтверждения", user.getEmail());
     }
 
     @Step("Ожидаем переход на страницу /account/registered")
@@ -76,7 +72,7 @@ public class RegistrationPage {
         for (int i = 0; i < 20; i++) {
             if (WebDriverRunner.url().contains("/account/registered")) {
                 log.info("Переход на /account/registered подтверждён");
-                Allure.addAttachment("URL подтверждён", WebDriverRunner.url());
+                io.qameta.allure.Allure.addAttachment("URL подтверждён", WebDriverRunner.url());
                 return;
             }
             sleep(250);
@@ -89,7 +85,6 @@ public class RegistrationPage {
         termsCheckbox.setCheckboxValue(true);
         warningCheckbox.setCheckboxValue(true);
         log.info("Чекбоксы выставлены");
-        Allure.addAttachment("Чекбоксы", "Terms + Warning");
     }
 
     @Step("Проверка: кнопка регистрации должна быть отключена")
@@ -110,7 +105,7 @@ public class RegistrationPage {
     public boolean isUserRegisteredMessageVisible() {
         boolean result = registrationBody.shouldHave(text("User registered")).exists();
         log.info("Сообщение 'User registered' найдено: {}", result);
-        Allure.addAttachment("Подтверждение регистрации", "User registered");
+        io.qameta.allure.Allure.addAttachment("Подтверждение регистрации", "User registered");
         return result;
     }
 }

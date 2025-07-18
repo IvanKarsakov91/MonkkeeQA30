@@ -62,11 +62,13 @@ public class EntryPage {
 
     @Step("Удалить одну запись с подтверждением (alert или confirm)")
     public void deleteEntryWithSystemAlert() {
+        int beforeCount = getEntryCount();
+
         selectFirstEntry();
         deleteButton.shouldBe(visible, TIMEOUT).click();
 
         boolean confirmed = handleConfirmation();
-        entryLinks.shouldHave(size(0), TIMEOUT);
+        waitForEntriesToReduceByOne(beforeCount);
 
         if (confirmed) {
             log.info("Удаление подтверждено и запись удалена");
@@ -83,7 +85,7 @@ public class EntryPage {
         deleteButton.shouldBe(visible, TIMEOUT).click();
 
         boolean confirmed = handleConfirmation();
-        entryLinks.shouldHave(size(0), TIMEOUT);
+        waitForAllEntriesToDisappear();
 
         if (confirmed) {
             log.info("Удалены все записи");
@@ -130,6 +132,13 @@ public class EntryPage {
         Allure.addAttachment("Состояние записей", "Записей не осталось");
     }
 
+    @Step("Ожидание уменьшения количества записей на одну. Было: {beforeCount}")
+    public void waitForEntriesToReduceByOne(int beforeCount) {
+        entryLinks.shouldHave(size(beforeCount - 1), TIMEOUT);
+        log.info("Количество записей уменьшилось: было {}, стало {}", beforeCount, entryLinks.size());
+        Allure.addAttachment("Уменьшение записей", "Было: " + beforeCount + ", Стало: " + entryLinks.size());
+    }
+
     @Step("Получить количество записей")
     public int getEntryCount() {
         int count = entryLinks.size();
@@ -140,8 +149,9 @@ public class EntryPage {
 
     @Step("Тест пройден успешно")
     public void confirmTestSuccess() {
-        log.info(" Все шаги отработали, тест завершён успешно");
-        Allure.addAttachment("Статус", " Тест завершён без ошибок");
+        log.info("Все шаги отработали, тест завершён успешно");
+        Allure.addAttachment("Статус", "Тест завершён без ошибок");
     }
 }
+
 

@@ -22,15 +22,14 @@ public class LoginPage {
     private final SelenideElement emailField = $("#login");
     private final SelenideElement passwordField = $("#password");
     private final SelenideElement loginButton = $("button[type='submit']");
-    private final SelenideElement reminderLink = $("a[href*='password_reminder']");
     private final SelenideElement goToEntriesLink = $("a[href='#/entries']");
 
     @Step("Открытие страницы логина")
     public void openLoginPage() {
         open(loginUrl);
-        emailField.should(exist, Duration.ofSeconds(15)).shouldBe(visible, enabled);
-        passwordField.should(exist, Duration.ofSeconds(15)).shouldBe(visible, enabled);
-        log.info("Страница логина загружена: {}", loginUrl);
+        emailField.should(appear, Duration.ofSeconds(5)).shouldBe(enabled);
+        passwordField.should(appear, Duration.ofSeconds(5)).shouldBe(enabled);
+        log.info("SPA логин-страница загружена: {}", loginUrl);
         Allure.addAttachment("Login URL", loginUrl);
     }
 
@@ -45,7 +44,7 @@ public class LoginPage {
 
     @Step("Переход по ссылке 'Go to your entries'")
     public void navigateToEntries() {
-        goToEntriesLink.shouldBe(exist, Duration.ofSeconds(15));
+        goToEntriesLink.shouldBe(visible, Duration.ofSeconds(5));
         if (goToEntriesLink.isDisplayed() && goToEntriesLink.getSize().getHeight() > 0) {
             goToEntriesLink.click();
             log.info("Нажата ссылка 'Go to your entries'");
@@ -60,26 +59,21 @@ public class LoginPage {
     public void performLoginAndGoToEntries(String email, String password) {
         openLoginPage();
         login(email, password);
-        navigateToEntries();
 
         if (!verifyRedirectToEntries()) {
-            String currentUrl = WebDriverRunner.url();
-            log.error("Редирект на entries не произошёл. Текущий URL: {}", currentUrl);
-            Allure.addAttachment("Ошибка редиректа", currentUrl);
-            throw new IllegalStateException("Редирект на /#/entries не произошёл.");
+            navigateToEntries();
+            if (!verifyRedirectToEntries()) {
+                String currentUrl = WebDriverRunner.url();
+                log.error("Редирект на entries не произошёл. Текущий URL: {}", currentUrl);
+                Allure.addAttachment("Ошибка редиректа", currentUrl);
+                throw new IllegalStateException("Редирект на /#/entries не произошёл.");
+            }
         }
     }
 
     @Step("Логин с валидным пользователем: {user.email}")
     public void loginWithValidUser(User user) {
         performLoginAndGoToEntries(user.getEmail(), user.getPassword());
-    }
-
-    @Step("Открытие формы восстановления пароля")
-    public void openPasswordReminder() {
-        reminderLink.shouldBe(visible, Duration.ofSeconds(10)).click();
-        log.info("Открыта форма восстановления пароля");
-        Allure.addAttachment("Password Reminder", WebDriverRunner.url());
     }
 
     @Step("Обновление страницы логина вручную")
@@ -91,9 +85,8 @@ public class LoginPage {
     @Step("Выход из аккаунта")
     public void logout() {
         SelenideElement logoutLabel = $$("span.user-menu__btn-label").findBy(text("Logout"));
-
         if (logoutLabel.exists()) {
-            logoutLabel.should(visible, Duration.ofSeconds(10)).click();
+            logoutLabel.shouldBe(visible, Duration.ofSeconds(5)).click();
             log.info("Нажата кнопка 'Logout'");
             Allure.addAttachment("Выход из аккаунта", "Кнопка Logout нажата");
         } else {
@@ -105,26 +98,23 @@ public class LoginPage {
 
     @Step("Проверка редиректа на страницу логина после выхода")
     public boolean verifyRedirectToLoginPage() {
-        for (int i = 0; i < 30; i++) {
+        for (int i = 0; i < 15; i++) {
             if (WebDriverRunner.url().endsWith("/#/")) {
                 log.info("Редирект подтверждён на /#/");
                 Allure.addAttachment("Redirect after logout", WebDriverRunner.url());
                 return true;
             }
-            sleep(300);
+            sleep(200);
         }
         log.warn("Редирект на /#/ не выполнен");
         return false;
     }
 
-    // метод verifyRedirectToEntries — остаётся без @Step, т.к. вызывается вложенно и возвращает boolean
     public boolean verifyRedirectToEntries() {
-        for (int i = 0; i < 30; i++) {
+        for (int i = 0; i < 15; i++) {
             if (WebDriverRunner.url().contains(successRedirectUrl)) return true;
-            sleep(300);
+            sleep(150);
         }
         return false;
     }
 }
-
-

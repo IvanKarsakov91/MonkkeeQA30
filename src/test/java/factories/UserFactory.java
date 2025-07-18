@@ -2,7 +2,6 @@ package factories;
 
 import com.github.javafaker.Faker;
 import config.TestConfig;
-import io.qameta.allure.Allure;
 import io.qameta.allure.Step;
 import models.User;
 import org.apache.logging.log4j.LogManager;
@@ -21,7 +20,6 @@ public class UserFactory {
 
         User user = new User(email, password, password, hint);
         log.info("Сгенерирован валидный пользователь: {}", email);
-        Allure.addAttachment("Пользователь (валидный)", email);
         return user;
     }
 
@@ -29,7 +27,6 @@ public class UserFactory {
     public static User emptyUser() {
         User user = new User("", "", "", "");
         log.info("Сгенерирован пустой пользователь");
-        Allure.addAttachment("Пользователь (пустой)", "—");
         return user;
     }
 
@@ -41,7 +38,6 @@ public class UserFactory {
 
         User user = new User(email, password, "", hint);
         log.info("Сгенерирован пользователь без подтверждения: {}", email);
-        Allure.addAttachment("Пользователь (без подтверждения)", email);
         return user;
     }
 
@@ -54,10 +50,7 @@ public class UserFactory {
 
         User user = new User(email, password, confirmation, hint);
         log.info("Используется пользователь из config.properties: {}", email);
-        Allure.addAttachment("Пользователь (из конфигурации)", email);
         return user;
     }
 }
-
-
 

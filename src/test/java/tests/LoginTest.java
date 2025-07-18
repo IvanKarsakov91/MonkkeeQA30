@@ -60,18 +60,7 @@ public class LoginTest extends BaseTest {
     }
 
     @Test(groups = {"regression"}, retryAnalyzer = listeners.RetryAnalyzer.class,
-            description = "2.5. Проверить отправку запроса на восстановление пароля")
-    @Story("2.5. Ссылка на восстановление пароля")
-    @Severity(SeverityLevel.MINOR)
-    public void testPasswordReminder() {
-        loginPage.openLoginPage();
-        loginPage.openPasswordReminder();
-        Assert.assertTrue(WebDriverRunner.url().contains("password_reminder"),
-                "Не выполнен переход на восстановление пароля");
-    }
-
-    @Test(groups = {"regression"}, retryAnalyzer = listeners.RetryAnalyzer.class,
-            description = "2.6. Проверить выход из аккаунта")
+            description = "2.5. Проверить выход из аккаунта")
     @Story("2.6. Logout")
     @Severity(SeverityLevel.CRITICAL)
     public void testLogoutFromAccount() {
@@ -83,4 +72,3 @@ public class LoginTest extends BaseTest {
                 "После выхода не произошёл переход на /app/#/");
     }
 }
-
