@@ -25,7 +25,7 @@ public class BaseTest {
     @Step("Настройка окружения перед тестом")
     public void setupAndLogin() {
         configureBrowser();
-        loginPage.openLoginPage(); // здесь уже вызывается clearBrowserSession внутри
+        loginPage.openLoginPage(); // внутри происходит инициализация WebDriver и очистка сессии
         loginPage.login(defaultUser.getEmail(), defaultUser.getPassword());
         log.info("Авторизация выполнена под: {}", defaultUser.getEmail());
     }
@@ -47,3 +47,4 @@ public class BaseTest {
         Selenide.closeWebDriver();
     }
 }
+

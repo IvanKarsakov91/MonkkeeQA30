@@ -8,7 +8,8 @@ import org.apache.logging.log4j.Logger;
 
 import java.time.Duration;
 
-import static com.codeborne.selenide.Condition.*;
+import static com.codeborne.selenide.Condition.text;
+import static com.codeborne.selenide.Condition.visible;
 import static com.codeborne.selenide.Selenide.*;
 
 public class LoginPage {
@@ -23,12 +24,15 @@ public class LoginPage {
 
     @Step("Открытие страницы логина")
     public void openLoginPage() {
+        open("https://monkkee.com/app/#/logout");
+        sleep(800);
         open(loginUrl);
-        sleep(500);
-        clearBrowserSession(); // выполняем JS уже после инициализации WebDriver
-        emailInput.should(appear, Duration.ofSeconds(10));
-        sleep(300);
-        passwordInput.should(appear, Duration.ofSeconds(10));
+        sleep(600);
+        executeJavaScript("window.localStorage.clear(); window.sessionStorage.clear();");
+        log.info("Очистка sessionStorage и localStorage выполнена");
+
+        emailInput.shouldBe(visible, Duration.ofSeconds(10));
+        passwordInput.shouldBe(visible, Duration.ofSeconds(10));
         sleep(300);
         log.info("Страница логина загружена");
     }
@@ -36,37 +40,37 @@ public class LoginPage {
     @Step("Логин по email и паролю")
     public void login(String email, String password) {
         emailInput.clear();
-        sleep(200);
         emailInput.setValue(email);
-        sleep(300);
         passwordInput.clear();
-        sleep(200);
         passwordInput.setValue(password);
-        sleep(300);
-        submitButton.shouldBe(enabled, Duration.ofSeconds(5));
-        submitButton.click();
+        submitButton.shouldBe(visible, Duration.ofSeconds(5)).click();
 
         for (int i = 0; i < 30; i++) {
-            if (WebDriverRunner.url().contains("/#/entries")) {
-                log.info("Переход на /#/entries — успешный логин");
+            String url = WebDriverRunner.url();
+            if (url.endsWith("/#/")) {
+                log.info("Редирект на /#/ подтверждён");
+                goToEntriesPage();
+                return;
+            }
+            if (url.contains("/#/entries")) {
+                log.info("Переход на /#/entries подтверждён: {}", url);
                 return;
             }
             sleep(500);
         }
 
-        throw new IllegalStateException("После логина не произошёл переход на /#/entries");
+        throw new IllegalStateException("После логина не произошёл переход на /#/ или /#/entries");
     }
 
-    @Step("Очистка sessionStorage и localStorage")
-    public void clearBrowserSession() {
-        executeJavaScript("window.localStorage.clear(); window.sessionStorage.clear();");
-        log.info("Очистка sessionStorage и localStorage завершена");
+    public void goToEntriesPage() {
+        executeJavaScript("document.querySelector(\"a[href='#/entries']\")?.click()");
+        sleep(1000);
+        log.info("Переход на страницу записей выполнен через JS");
     }
 
     @Step("Выход из аккаунта")
     public void logout() {
         logoutButton.shouldBe(visible, Duration.ofSeconds(10));
-        sleep(300);
         logoutButton.click();
         sleep(500);
         log.info("Пользователь вышел из аккаунта");
@@ -85,4 +89,3 @@ public class LoginPage {
         return false;
     }
 }
-
