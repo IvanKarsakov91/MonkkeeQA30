@@ -104,8 +104,7 @@
                     <parallel>classes</parallel>
                     <threadCount>3</threadCount>
                     <suiteXmlFiles>
-                        <suiteXmlFile>src/test/resources/testng-smoke.xml</suiteXmlFile>
-                        <suiteXmlFile>src/test/resources/testng-regression.xml</suiteXmlFile>
+                        <suiteXmlFile>src/test/resources/testng-cross.xml</suiteXmlFile>
                     </suiteXmlFiles>
                     <systemPropertyVariables>
                         <allure.results.directory>${project.build.directory}/allure-results</allure.results.directory>
@@ -130,4 +129,3 @@
         </plugins>
     </build>
 </project>
-
