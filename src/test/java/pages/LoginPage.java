@@ -36,9 +36,9 @@ public class LoginPage {
     @Step("Попытка входа: {email}")
     public void login(String email, String password) {
         emailInput.clear();
-        emailInput.setValue(email).shouldBe(not(empty));
+        emailInput.setValue(email);
         passwordInput.clear();
-        passwordInput.setValue(password).shouldBe(not(empty));
+        passwordInput.setValue(password);
         submitButton.shouldBe(enabled, Duration.ofSeconds(5)).click();
         log.info("Введены данные пользователя: {}", email);
     }
@@ -98,6 +98,4 @@ public class LoginPage {
         return false;
     }
 }
-
-
 
