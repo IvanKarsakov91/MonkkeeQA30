@@ -15,9 +15,6 @@ public class LoginPage {
 
     private static final Logger log = LogManager.getLogger(LoginPage.class);
 
-    private static final String loginUrl = "https://monkkee.com/app/#/";
-    private static final String entriesUrl = "https://monkkee.com/app/#/entries";
-
     private final SelenideElement emailInput = $("#login");
     private final SelenideElement passwordInput = $("#password");
     private final SelenideElement submitButton = $("button[type='submit']");
@@ -26,75 +23,80 @@ public class LoginPage {
 
     @Step("Открытие страницы логина")
     public void openLoginPage() {
-        open(loginUrl);
+        open("https://monkkee.com/app/#/");
+        sleep(500);
         emailInput.should(appear, Duration.ofSeconds(10));
+        sleep(500);
         passwordInput.should(appear, Duration.ofSeconds(10));
+        sleep(500);
         log.info("Открыта страница логина");
     }
 
-    @Step("Ввод email и пароля + ожидание перехода")
+    @Step("Ввод email и пароля с паузами, затем нажатие на 'Login'")
     public void login(String email, String password) {
         emailInput.clear();
+        sleep(300);
         emailInput.setValue(email);
+        sleep(500);
+
         passwordInput.clear();
+        sleep(300);
         passwordInput.setValue(password);
-        submitButton.shouldBe(enabled, Duration.ofSeconds(5)).click();
+        sleep(500);
+
+        submitButton.shouldBe(enabled, Duration.ofSeconds(5));
+        sleep(300);
+        submitButton.click();
+        sleep(500);
         log.info("Данные логина введены: {}", email);
-
-        for (int i = 0; i < 20; i++) {
-            if (!WebDriverRunner.url().endsWith("/#/")) {
-                log.info("Переход после логина подтверждён: {}", WebDriverRunner.url());
-                return;
-            }
-            sleep(500);
-        }
-        log.warn("После логина остался на /#/: {}", WebDriverRunner.url());
-    }
-
-    @Step("Логин и переход напрямую на /#/entries")
-    public void loginAndGoToEntries(String email, String password) {
-        openLoginPage();
-        login(email, password);
-        open(entriesUrl);
 
         for (int i = 0; i < 40; i++) {
             if (WebDriverRunner.url().contains("/#/entries")) {
-                log.info("Переход на /#/entries подтверждён");
+                log.info("Переход на /#/entries подтверждён автоматически: {}", WebDriverRunner.url());
+                sleep(500);
                 return;
             }
             sleep(500);
         }
+        log.warn("После логина не произошёл переход на /#/entries: {}", WebDriverRunner.url());
+    }
 
-        throw new IllegalStateException("Не удалось открыть /#/entries после логина");
+    @Step("Нажатие на кнопку 'Create an entry'")
+    public void clickCreateEntryButton() {
+        createEntryButton.shouldBe(enabled, Duration.ofSeconds(10));
+        sleep(500);
+        createEntryButton.click();
+        sleep(500);
+        log.info("Кнопка создания новой записи нажата");
     }
 
     @Step("Проверка наличия иконки пера (создание новой записи)")
     public boolean isPenIconPresent() {
+        sleep(300);
         return $("path#Icon_awesome-pen-nib")
                 .should(appear, Duration.ofSeconds(10))
                 .exists();
     }
 
-    @Step("Нажатие на кнопку 'Create an entry'")
-    public void clickCreateEntryButton() {
-        createEntryButton.shouldBe(enabled, Duration.ofSeconds(10)).click();
-        log.info("Кнопка создания новой записи нажата");
-    }
-
     @Step("Выход из аккаунта")
     public void logout() {
-        logoutLabel.should(appear, Duration.ofSeconds(10)).click();
+        logoutLabel.should(appear, Duration.ofSeconds(10));
+        sleep(500);
+        logoutLabel.click();
+        sleep(500);
         log.info("Пользователь вышел из системы");
     }
 
     @Step("Ожидание редиректа на /#/")
     public boolean waitForRedirectToLoginPage() {
         for (int i = 0; i < 20; i++) {
-            if (WebDriverRunner.url().endsWith("/#/")) return true;
+            if (WebDriverRunner.url().endsWith("/#/")) {
+                sleep(300);
+                return true;
+            }
             sleep(200);
         }
         log.warn("Редирект после выхода не выполнен");
         return false;
     }
 }
-

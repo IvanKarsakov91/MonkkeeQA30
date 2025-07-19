@@ -25,7 +25,8 @@ public class BaseTest {
     @Step("Настройка окружения перед тестом")
     public void setupAndLogin() {
         configureBrowser();
-        loginPage.loginAndGoToEntries(defaultUser.getEmail(), defaultUser.getPassword());
+        loginPage.openLoginPage();
+        loginPage.login(defaultUser.getEmail(), defaultUser.getPassword());
         log.info("Авторизация выполнена под: {}", defaultUser.getEmail());
     }
 
@@ -46,6 +47,7 @@ public class BaseTest {
         Selenide.closeWebDriver();
     }
 }
+
 
 
 

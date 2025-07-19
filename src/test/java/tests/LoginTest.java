@@ -29,22 +29,24 @@ public class LoginTest extends BaseTest {
         loginPage.openLoginPage();
         loginPage.login(defaultUser.getEmail(), defaultUser.getPassword());
 
+        // Ожидание появления кнопки 'Go to your entries.'
         SelenideElement entriesLink = $("a[href='#/entries']");
-        entriesLink.should(appear, Duration.ofSeconds(15));
+        entriesLink.should(appear, Duration.ofSeconds(10));
+        sleep(500);
+        entriesLink.click();
+        sleep(500);
 
-        executeJavaScript("arguments[0].scrollIntoView(true);", entriesLink);
-        executeJavaScript("arguments[0].click();", entriesLink);
+        // Проверка перехода на /#/entries
+        Assert.assertTrue(WebDriverRunner.url().contains("/#/entries"),
+                "После клика по 'Go to your entries' не произошёл переход на /#/entries");
 
-        for (int i = 0; i < 40; i++) {
-            if (WebDriverRunner.url().contains("/#/entries")) {
-                log.info("Переход на /#/entries подтверждён: {}", WebDriverRunner.url());
-                return;
-            }
-            sleep(500);
-        }
-
-        throw new IllegalStateException("Клик выполнен, но переход на /#/entries не произошёл");
+        // Проверка доступности кнопки создания записи
+        SelenideElement createButton = $("#create-entry");
+        createButton.should(exist, Duration.ofSeconds(10));
+        createButton.shouldBe(enabled);
+        log.info("Кнопка 'Create an entry' доступна — тест пройден");
     }
+
 
 
     @Test(groups = {"regression"}, retryAnalyzer = listeners.RetryAnalyzer.class,
