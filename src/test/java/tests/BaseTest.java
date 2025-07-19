@@ -5,9 +5,12 @@ import com.codeborne.selenide.Selenide;
 import io.qameta.allure.Step;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.openqa.selenium.chrome.ChromeOptions;
 import org.testng.annotations.*;
 import pages.LoginPage;
 import utils.ConfigReader;
+
+import java.util.UUID;
 
 public class BaseTest {
 
@@ -47,22 +50,35 @@ public class BaseTest {
         switch (browser.toLowerCase()) {
             case "chrome":
                 Configuration.browser = "chrome";
+
+                ChromeOptions chromeOptions = new ChromeOptions();
+                // Уникальный профиль для каждого запуска
+                String uuid = UUID.randomUUID().toString();
+                chromeOptions.addArguments("--user-data-dir=/tmp/profile-" + uuid);
+                chromeOptions.addArguments("--window-size=1280,800");
+
+                if (Boolean.parseBoolean(ConfigReader.get("headless"))) {
+                    chromeOptions.addArguments("--headless=new");
+                    chromeOptions.addArguments("--disable-gpu");
+                }
+
+                Configuration.browserCapabilities = chromeOptions;
                 break;
+
             case "edge":
                 System.setProperty("webdriver.edge.driver", "C:\\Users\\SofIvDar\\Downloads\\edgedriver_win32\\msedgedriver.exe");
                 Configuration.browser = "edge";
                 break;
+
             default:
                 throw new IllegalArgumentException("Неизвестный браузер: " + browser);
         }
 
-        Configuration.browserSize = "1280x800";
         Configuration.timeout = 6000;
-        Configuration.headless = Boolean.parseBoolean(ConfigReader.get("headless"));
 
         log.info("Браузер: {}", Configuration.browser);
-        log.info("Headless: {}", Configuration.headless);
-        log.info("Размер окна: {}", Configuration.browserSize);
+        log.info("Headless: {}", ConfigReader.get("headless"));
+        log.info("Размер окна: 1280x800");
     }
 
     @AfterMethod(alwaysRun = true)
@@ -72,5 +88,6 @@ public class BaseTest {
         Selenide.closeWebDriver();
     }
 }
+
 
 
