@@ -2,7 +2,9 @@ name: Run Monkkee Tests and Publish Allure Report
 
 on:
   push:
-    branches: [ main ]
+    branches:
+      - main
+  workflow_dispatch:
 
 jobs:
   test:
@@ -18,15 +20,21 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
 
-      - name: Run tests
-        run: mvn clean test
+      - name: Cache Maven packages
+        uses: actions/cache@v3
+        with:
+          path: ~/.m2
+          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+          restore-keys: ${{ runner.os }}-m2
 
-      - name: Install Allure CLI
+      - name: Run tests
+        run: mvn clean verify
+
+      - name: Download Allure CLI
         run: |
-          wget https://github.com/allure-framework/allure2/releases/download/2.24.0/allure-2.24.0.tgz
-          tar -xvzf allure-2.24.0.tgz
-          sudo mv allure-2.24.0 /opt/allure
-          sudo ln -s /opt/allure/bin/allure /usr/bin/allure
+          curl -o allure.zip -L https://github.com/allure-framework/allure2/releases/download/2.34.1/allure-2.34.1.zip
+          unzip allure.zip
+          echo "$(pwd)/allure-2.34.1/bin" >> $GITHUB_PATH
 
       - name: Generate Allure Report
         run: allure generate target/allure-results --clean -o target/allure-report
