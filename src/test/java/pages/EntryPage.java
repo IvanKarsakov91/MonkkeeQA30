@@ -30,11 +30,23 @@ public class EntryPage {
     private final SelenideElement firstEntryCheckbox = $("input[ng-model='model.checked[entry.id]']");
     private final ElementsCollection entryLinks = $$("a.entries__entry");
 
-    @Step("Перейти на страницу /#/entries")
+    @Step("Перейти на страницу /#/entries с ожиданием UI")
     public void goToEntriesPage() {
         open("https://monkkee.com/app/#/entries");
-        createEntryButton.should(appear, TIMEOUT);
-        log.info("Открыта страница записей");
+
+        for (int i = 0; i < 20; i++) {
+            if (getWebDriver().getCurrentUrl().contains("/#/entries")) break;
+            sleep(250);
+        }
+
+        if (createEntryButton.exists()) {
+            createEntryButton.shouldBe(visible, TIMEOUT);
+            log.info("Открыта страница записей, кнопка создания доступна");
+        } else {
+            log.error("Кнопка #create-entry отсутствует в DOM");
+            Allure.addAttachment("Ошибка", "Элемент #create-entry не найден");
+            throw new IllegalStateException("Элемент #create-entry не найден");
+        }
     }
 
     @Step("Создать запись и перейти назад")
@@ -60,7 +72,7 @@ public class EntryPage {
         Allure.addAttachment("Чекбокс", "Выбран");
     }
 
-    @Step("Удалить одну запись с подтверждением (alert или confirm)")
+    @Step("Удалить одну запись с подтверждением")
     public void deleteEntryWithSystemAlert() {
         int beforeCount = getEntryCount();
 
@@ -79,7 +91,7 @@ public class EntryPage {
         }
     }
 
-    @Step("Удалить все записи (с подтверждением)")
+    @Step("Удалить все записи с подтверждением")
     public void deleteAllEntries() {
         selectAllCheckbox.shouldBe(visible, TIMEOUT).click();
         deleteButton.shouldBe(visible, TIMEOUT).click();
@@ -153,5 +165,4 @@ public class EntryPage {
         Allure.addAttachment("Статус", "Тест завершён без ошибок");
     }
 }
-
 
