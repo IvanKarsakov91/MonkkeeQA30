@@ -39,35 +39,31 @@ public class EntryPage {
             sleep(250);
         }
 
-        if (createEntryButton.exists()) {
-            createEntryButton.shouldBe(visible, TIMEOUT);
-            log.info("Открыта страница записей, кнопка создания доступна");
-        } else {
-            log.error("Кнопка #create-entry отсутствует в DOM");
-            Allure.addAttachment("Ошибка", "Элемент #create-entry не найден");
-            throw new IllegalStateException("Элемент #create-entry не найден");
-        }
+        createEntryButton.should(appear, TIMEOUT);
+        log.info("Страница записей загружена");
     }
 
     @Step("Создать запись и перейти назад")
     public void createEntry() {
+        createEntryButton.should(appear, TIMEOUT);
+
         if (createEntryButton.has(cssClass("disabled"))) {
             log.warn("Кнопка создания отключена");
             Allure.addAttachment("Запись", "Кнопка создания отключена");
             return;
         }
 
-        createEntryButton.shouldBe(visible, TIMEOUT).click();
+        createEntryButton.click();
         log.info("Клик по кнопке создания");
 
-        backToOverviewButton.shouldBe(visible, TIMEOUT).click();
+        backToOverviewButton.should(appear, TIMEOUT).click();
         log.info("Переход обратно на список записей");
         Allure.addAttachment("Навигация", "Вернулись к списку записей");
     }
 
     @Step("Выбрать первую запись")
     public void selectFirstEntry() {
-        firstEntryCheckbox.shouldBe(visible, TIMEOUT).click();
+        firstEntryCheckbox.should(appear, TIMEOUT).click();
         log.info("Чекбокс первой записи выбран");
         Allure.addAttachment("Чекбокс", "Выбран");
     }
@@ -77,7 +73,7 @@ public class EntryPage {
         int beforeCount = getEntryCount();
 
         selectFirstEntry();
-        deleteButton.shouldBe(visible, TIMEOUT).click();
+        deleteButton.should(appear, TIMEOUT).click();
 
         boolean confirmed = handleConfirmation();
         waitForEntriesToReduceByOne(beforeCount);
@@ -93,8 +89,8 @@ public class EntryPage {
 
     @Step("Удалить все записи с подтверждением")
     public void deleteAllEntries() {
-        selectAllCheckbox.shouldBe(visible, TIMEOUT).click();
-        deleteButton.shouldBe(visible, TIMEOUT).click();
+        selectAllCheckbox.should(appear, TIMEOUT).click();
+        deleteButton.should(appear, TIMEOUT).click();
 
         boolean confirmed = handleConfirmation();
         waitForAllEntriesToDisappear();
@@ -118,7 +114,7 @@ public class EntryPage {
             return true;
         } catch (TimeoutException e) {
             if (confirmDeleteButton.exists()) {
-                confirmDeleteButton.shouldBe(visible, TIMEOUT).click();
+                confirmDeleteButton.should(appear, TIMEOUT).click();
                 log.info("Кнопка confirm нажата вместо alert");
                 Allure.addAttachment("Confirm", "Нажата кнопка подтверждения");
                 return true;
@@ -153,6 +149,7 @@ public class EntryPage {
 
     @Step("Получить количество записей")
     public int getEntryCount() {
+        entryLinks.should(exist);
         int count = entryLinks.size();
         log.info("Записей на странице: {}", count);
         Allure.addAttachment("Количество записей", String.valueOf(count));
