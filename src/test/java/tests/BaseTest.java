@@ -34,11 +34,13 @@ public class BaseTest {
         }
     }
 
-    @Step("Настройка кастомного драйвера браузера")
+    @Step("Настройка браузера Chrome без кастомного драйвера")
     private void configureBrowser() {
-        Configuration.browser = "utils.CustomChromeDriver";
+        Configuration.browser = "chrome";
+        Configuration.headless = false;
+        Configuration.browserSize = "1280x800";
         Configuration.timeout = 6000;
-        log.info("Браузер: CustomChromeDriver");
+        log.info("Браузер: Chrome (встроенный)");
     }
 
     @AfterMethod(alwaysRun = true)

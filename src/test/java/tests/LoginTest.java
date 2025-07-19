@@ -18,7 +18,7 @@ public class LoginTest extends BaseTest {
     @Severity(SeverityLevel.CRITICAL)
     public void testSuccessfulLogin() {
         User user = UserFactory.existingUser();
-        loginPage.loginWithValidUser(user);
+        loginPage.loginWith(user);
         Assert.assertTrue(WebDriverRunner.url().contains("/#/entries"),
                 "После логина должен быть переход на /#/entries");
     }
@@ -30,7 +30,7 @@ public class LoginTest extends BaseTest {
     public void testLoginWithEmptyFields() {
         loginPage.openLoginPage();
         loginPage.login("", "");
-        Assert.assertFalse(loginPage.verifyRedirectToEntries(),
+        Assert.assertFalse(loginPage.waitForRedirectToEntries(),
                 "Не должен происходить переход при пустых данных");
     }
 
@@ -41,7 +41,7 @@ public class LoginTest extends BaseTest {
     public void testLoginWithEmptyPassword() {
         loginPage.openLoginPage();
         loginPage.login("user@mail.com", "");
-        Assert.assertFalse(loginPage.verifyRedirectToEntries(),
+        Assert.assertFalse(loginPage.waitForRedirectToEntries(),
                 "Не должен происходить переход при пустом пароле");
     }
 
@@ -52,19 +52,19 @@ public class LoginTest extends BaseTest {
     public void testLoginWithEmptyEmail() {
         loginPage.openLoginPage();
         loginPage.login("", "Password123");
-        Assert.assertFalse(loginPage.verifyRedirectToEntries(),
+        Assert.assertFalse(loginPage.waitForRedirectToEntries(),
                 "Не должен происходить переход при пустом email");
     }
 
     @Test(groups = {"regression"}, retryAnalyzer = listeners.RetryAnalyzer.class,
             description = "2.5. Проверить выход из аккаунта")
-    @Story("2.6. Logout")
+    @Story("2.5. Logout")
     @Severity(SeverityLevel.CRITICAL)
     public void testLogoutFromAccount() {
         User user = UserFactory.existingUser();
-        loginPage.loginWithValidUser(user);
+        loginPage.loginWith(user);
         loginPage.logout();
-        Assert.assertTrue(loginPage.verifyRedirectToLoginPage(),
+        Assert.assertTrue(loginPage.waitForRedirectToLoginPage(),
                 "После выхода не произошёл переход на /app/#/");
     }
 }

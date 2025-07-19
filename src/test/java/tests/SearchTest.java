@@ -18,7 +18,7 @@ public class SearchTest extends BaseTest {
     @BeforeMethod
     public void setup() {
         User user = UserFactory.existingUser();
-        loginPage.loginWithValidUser(user);
+        loginPage.loginWith(user); // ← метод, который точно существует
     }
 
     @Test(priority = 1, groups = {"smoke"}, description = "4.1. Поиск записи по запросу '1111'")
@@ -46,4 +46,5 @@ public class SearchTest extends BaseTest {
                 "Сообщение о пустом результате не отображено";
     }
 }
+
 

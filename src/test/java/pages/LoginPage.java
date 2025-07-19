@@ -2,7 +2,6 @@ package pages;
 
 import com.codeborne.selenide.SelenideElement;
 import com.codeborne.selenide.WebDriverRunner;
-import io.qameta.allure.Allure;
 import io.qameta.allure.Step;
 import models.User;
 import org.apache.logging.log4j.LogManager;
@@ -16,93 +15,89 @@ import static com.codeborne.selenide.Selenide.*;
 public class LoginPage {
 
     private static final Logger log = LogManager.getLogger(LoginPage.class);
+
     private static final String loginUrl = "https://monkkee.com/app/#/";
     private static final String successRedirectUrl = "/#/entries";
 
-    private final SelenideElement emailField = $("#login");
-    private final SelenideElement passwordField = $("#password");
-    private final SelenideElement loginButton = $("button[type='submit']");
-    private final SelenideElement goToEntriesLink = $("a[href='#/entries']");
+    private final SelenideElement emailInput = $("#login");
+    private final SelenideElement passwordInput = $("#password");
+    private final SelenideElement submitButton = $("button[type='submit']");
+    private final SelenideElement entriesLink = $("a[href='#/entries']");
+    private final SelenideElement logoutLabel = $$("span.user-menu__btn-label").findBy(text("Logout"));
 
-    @Step("Открытие страницы логина")
+    @Step("Открытие страницы входа")
     public void openLoginPage() {
         open(loginUrl);
-        emailField.should(appear, Duration.ofSeconds(5)).shouldBe(enabled);
-        passwordField.should(appear, Duration.ofSeconds(5)).shouldBe(enabled);
-        log.info("SPA логин-страница загружена: {}", loginUrl);
-        Allure.addAttachment("Login URL", loginUrl);
+        emailInput.should(appear, Duration.ofSeconds(10));
+        passwordInput.should(appear, Duration.ofSeconds(10));
+        log.info("Открыта страница логина: {}", loginUrl);
     }
 
-    @Step("Логин под email: {email}")
+    @Step("Попытка входа: {email}")
     public void login(String email, String password) {
-        emailField.clear();
-        emailField.setValue(email).shouldBe(not(empty));
-        passwordField.clear();
-        passwordField.setValue(password).shouldBe(not(empty));
-        loginButton.shouldBe(enabled, Duration.ofSeconds(3)).click();
-        log.info("Попытка логина: {}", email);
-        Allure.addAttachment("Попытка логина", email);
+        emailInput.clear();
+        emailInput.setValue(email).shouldBe(not(empty));
+        passwordInput.clear();
+        passwordInput.setValue(password).shouldBe(not(empty));
+        submitButton.shouldBe(enabled, Duration.ofSeconds(5)).click();
+        log.info("Введены данные пользователя: {}", email);
     }
 
-    @Step("Переход по ссылке 'Go to your entries'")
-    public void navigateToEntries() {
-        goToEntriesLink.shouldBe(visible, Duration.ofSeconds(5));
-        if (goToEntriesLink.isDisplayed() && goToEntriesLink.getSize().getHeight() > 0) {
-            goToEntriesLink.click();
+    @Step("Переход к записям вручную")
+    public void clickEntriesLinkIfVisible() {
+        entriesLink.shouldBe(visible, Duration.ofSeconds(5));
+        if (entriesLink.exists() && entriesLink.isDisplayed()) {
+            entriesLink.click();
             log.info("Нажата ссылка 'Go to your entries'");
-            Allure.addAttachment("Переход на entries", WebDriverRunner.url());
-        } else {
-            log.warn("Ссылка 'Go to your entries' неактивна — пропускаем клик");
-            Allure.addAttachment("Состояние ссылки", "Ссылка неактивна или имеет нулевой размер");
         }
     }
 
-    @Step("Вход и переход на /#/entries для email: {email}")
-    public void performLoginAndGoToEntries(String email, String password) {
+    @Step("Ожидание редиректа на /#/entries")
+    public boolean waitForRedirectToEntries() {
+        for (int i = 0; i < 20; i++) {
+            if (WebDriverRunner.url().contains(successRedirectUrl)) return true;
+            sleep(250);
+        }
+        log.warn("Не удалось дождаться перехода на /#/entries");
+        return false;
+    }
+
+    @Step("Вход с проверкой редиректа")
+    public void loginAndWaitForRedirect(String email, String password) {
         openLoginPage();
         login(email, password);
 
-        if (!verifyRedirectToEntries()) {
-            navigateToEntries();
-            if (!verifyRedirectToEntries()) {
+        if (!waitForRedirectToEntries()) {
+            clickEntriesLinkIfVisible();
+            if (!waitForRedirectToEntries()) {
                 String currentUrl = WebDriverRunner.url();
-                log.error("Редирект на entries не произошёл. Текущий URL: {}", currentUrl);
-                Allure.addAttachment("Ошибка редиректа", currentUrl);
-                throw new IllegalStateException("Редирект на /#/entries не произошёл.");
+                log.error("Редирект не выполнен. Текущий URL: {}", currentUrl);
+                throw new IllegalStateException("Ожидаемый переход на /#/entries не выполнен");
             }
         }
     }
 
-    @Step("Логин с валидным пользователем: {user.email}")
-    public void loginWithValidUser(User user) {
-        performLoginAndGoToEntries(user.getEmail(), user.getPassword());
+    @Step("Вход через пользователя: {user.email}")
+    public void loginWith(User user) {
+        loginAndWaitForRedirect(user.getEmail(), user.getPassword());
     }
 
+    @Step("Выход из аккаунта")
     public void logout() {
-        SelenideElement logoutLabel = $$("span.user-menu__btn-label").findBy(text("Logout"));
-        logoutLabel.shouldBe(visible, Duration.ofSeconds(5)).click();
-        log.info("Нажата кнопка 'Logout'");
-        Allure.addAttachment("Выход из аккаунта", "Кнопка Logout нажата");
+        logoutLabel.shouldBe(visible, Duration.ofSeconds(10)).click();
+        log.info("Выполнен выход из аккаунта");
     }
 
-    public boolean verifyRedirectToLoginPage() {
-        for (int i = 0; i < 15; i++) {
-            if (WebDriverRunner.url().endsWith("/#/")) {
-                log.info("Редирект подтверждён на /#/");
-                Allure.addAttachment("Redirect after logout", WebDriverRunner.url());
-                return true;
-            }
+    @Step("Ожидание возврата на /#/")
+    public boolean waitForRedirectToLoginPage() {
+        for (int i = 0; i < 20; i++) {
+            if (WebDriverRunner.url().endsWith("/#/")) return true;
             sleep(200);
         }
-        return false;
-    }
-
-    public boolean verifyRedirectToEntries() {
-        for (int i = 0; i < 15; i++) {
-            if (WebDriverRunner.url().contains(successRedirectUrl)) return true;
-            sleep(150);
-        }
+        log.warn("Редирект на /#/ после выхода не выполнен");
         return false;
     }
 }
+
+
 

@@ -1,4 +1,4 @@
-package config;
+package utils;
 
 import com.codeborne.selenide.WebDriverProvider;
 import org.openqa.selenium.WebDriver;
