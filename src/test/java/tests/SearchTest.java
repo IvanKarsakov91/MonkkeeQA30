@@ -1,12 +1,10 @@
 package tests;
 
 import io.qameta.allure.*;
-import models.User;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 import pages.LoginPage;
 import pages.SearchPage;
-import factories.UserFactory;
 
 @Epic("4. Поиск")
 @Feature("4.0 Поиск записей")
@@ -17,8 +15,9 @@ public class SearchTest extends BaseTest {
 
     @BeforeMethod
     public void setup() {
-        User user = UserFactory.existingUser();
-        loginPage.loginWith(user); // ← метод, который точно существует
+        String email = System.getProperty("user", "user@mail.com");
+        String password = System.getProperty("password", "Password123");
+        loginPage.loginAndApprove(email, password);
     }
 
     @Test(priority = 1, groups = {"smoke"}, description = "4.1. Поиск записи по запросу '1111'")
@@ -46,5 +45,7 @@ public class SearchTest extends BaseTest {
                 "Сообщение о пустом результате не отображено";
     }
 }
+
+
 
 

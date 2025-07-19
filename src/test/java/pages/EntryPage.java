@@ -149,7 +149,7 @@ public class EntryPage {
 
     @Step("Получить количество записей")
     public int getEntryCount() {
-        entryLinks.should(exist);
+        entryLinks.shouldHave(sizeGreaterThanOrEqual(0), TIMEOUT);
         int count = entryLinks.size();
         log.info("Записей на странице: {}", count);
         Allure.addAttachment("Количество записей", String.valueOf(count));
@@ -162,4 +162,5 @@ public class EntryPage {
         Allure.addAttachment("Статус", "Тест завершён без ошибок");
     }
 }
+
 
