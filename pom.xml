@@ -104,7 +104,7 @@
                     <parallel>classes</parallel>
                     <threadCount>3</threadCount>
                     <suiteXmlFiles>
-                        <suiteXmlFile>src/test/resources/testng-cross.xml</suiteXmlFile>
+                        <suiteXmlFile>src/test/resources/testng-full.xml</suiteXmlFile>
                     </suiteXmlFiles>
                     <systemPropertyVariables>
                         <allure.results.directory>${project.build.directory}/allure-results</allure.results.directory>
