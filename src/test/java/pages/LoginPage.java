@@ -35,9 +35,11 @@ public class LoginPage {
 
     @Step("Логин под email: {email}")
     public void login(String email, String password) {
-        emailField.setValue(email);
-        passwordField.setValue(password);
-        loginButton.shouldBe(visible).click();
+        emailField.clear();
+        emailField.setValue(email).shouldBe(not(empty));
+        passwordField.clear();
+        passwordField.setValue(password).shouldBe(not(empty));
+        loginButton.shouldBe(enabled, Duration.ofSeconds(3)).click();
         log.info("Попытка логина: {}", email);
         Allure.addAttachment("Попытка логина", email);
     }
@@ -76,27 +78,13 @@ public class LoginPage {
         performLoginAndGoToEntries(user.getEmail(), user.getPassword());
     }
 
-    @Step("Обновление страницы логина вручную")
-    public void refreshPage() {
-        refresh();
-        log.info("Страница логина вручную обновлена");
-    }
-
-    @Step("Выход из аккаунта")
     public void logout() {
         SelenideElement logoutLabel = $$("span.user-menu__btn-label").findBy(text("Logout"));
-        if (logoutLabel.exists()) {
-            logoutLabel.shouldBe(visible, Duration.ofSeconds(5)).click();
-            log.info("Нажата кнопка 'Logout'");
-            Allure.addAttachment("Выход из аккаунта", "Кнопка Logout нажата");
-        } else {
-            log.warn("Кнопка 'Logout' не найдена — пользователь, возможно, не авторизован");
-            Allure.addAttachment("Ошибка выхода", "Кнопка Logout отсутствует");
-            throw new IllegalStateException("Logout недоступен — пользователь не залогинен?");
-        }
+        logoutLabel.shouldBe(visible, Duration.ofSeconds(5)).click();
+        log.info("Нажата кнопка 'Logout'");
+        Allure.addAttachment("Выход из аккаунта", "Кнопка Logout нажата");
     }
 
-    @Step("Проверка редиректа на страницу логина после выхода")
     public boolean verifyRedirectToLoginPage() {
         for (int i = 0; i < 15; i++) {
             if (WebDriverRunner.url().endsWith("/#/")) {
@@ -106,7 +94,6 @@ public class LoginPage {
             }
             sleep(200);
         }
-        log.warn("Редирект на /#/ не выполнен");
         return false;
     }
 
@@ -118,3 +105,4 @@ public class LoginPage {
         return false;
     }
 }
+

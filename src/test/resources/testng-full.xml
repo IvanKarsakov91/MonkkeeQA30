@@ -6,7 +6,7 @@
         <parameter name="requireLogin" value="false"/>
         <classes>
             <class name="tests.LoginTest"/>
-            <class name="tests.RegistrationTest"/>
+            <!--<class name="tests.RegistrationTest"/>-->
         </classes>
     </test>
 

@@ -12,8 +12,6 @@ import factories.UserFactory;
 @Feature("2.0. Проверка формы логина")
 public class LoginTest extends BaseTest {
 
-    LoginPage loginPage = new LoginPage();
-
     @Test(groups = {"smoke"}, retryAnalyzer = listeners.RetryAnalyzer.class,
             description = "2.1. Проверить успешный вход при корректных данных")
     @Story("2.1. Валидные email и пароль")
@@ -21,7 +19,6 @@ public class LoginTest extends BaseTest {
     public void testSuccessfulLogin() {
         User user = UserFactory.existingUser();
         loginPage.loginWithValidUser(user);
-
         Assert.assertTrue(WebDriverRunner.url().contains("/#/entries"),
                 "После логина должен быть переход на /#/entries");
     }
@@ -66,9 +63,9 @@ public class LoginTest extends BaseTest {
     public void testLogoutFromAccount() {
         User user = UserFactory.existingUser();
         loginPage.loginWithValidUser(user);
-
         loginPage.logout();
         Assert.assertTrue(loginPage.verifyRedirectToLoginPage(),
                 "После выхода не произошёл переход на /app/#/");
     }
 }
+
