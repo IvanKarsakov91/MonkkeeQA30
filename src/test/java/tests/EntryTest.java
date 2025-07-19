@@ -1,24 +1,14 @@
 package tests;
 
 import io.qameta.allure.*;
-import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 import pages.EntryPage;
-import pages.LoginPage;
 
 @Epic("3. Работа с записями")
 @Feature("3.0 Управление записями")
 public class EntryTest extends BaseTest {
 
-    private final LoginPage loginPage = new LoginPage();
     private final EntryPage entryPage = new EntryPage();
-
-    @BeforeMethod
-    public void setup() {
-        String email = System.getProperty("user", "user@mail.com");
-        String password = System.getProperty("password", "Password123");
-        loginPage.loginAndApprove(email, password);
-    }
 
     @Test(priority = 1, groups = {"smoke"}, description = "3.1. Создание записи с чекбоксом как апрув")
     @Story("3.1. Чекбокс апрув")
@@ -69,6 +59,3 @@ public class EntryTest extends BaseTest {
         entryPage.confirmTestSuccess();
     }
 }
-
-
-

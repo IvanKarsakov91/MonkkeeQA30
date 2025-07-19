@@ -9,7 +9,7 @@
             </run>
         </groups>
         <classes>
-            <!--<class name="tests.LoginTest"/>-->
+            <class name="tests.LoginTest"/>
             <!--<class name="tests.RegistrationTest"/>-->
         </classes>
     </test>
@@ -22,7 +22,7 @@
             </run>
         </groups>
         <classes>
-            <class name="tests.EntryTest"/>
+            <!--<class name="tests.EntryTest"/>-->
             <!--<class name="tests.SearchTest"/>-->
             <!--<class name="tests.LanguageTest"/>-->
         </classes>

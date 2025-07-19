@@ -1,24 +1,14 @@
 package tests;
 
 import io.qameta.allure.*;
-import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
-import pages.LoginPage;
 import pages.SearchPage;
 
 @Epic("4. Поиск")
 @Feature("4.0 Поиск записей")
 public class SearchTest extends BaseTest {
 
-    private final LoginPage loginPage = new LoginPage();
     private final SearchPage searchPage = new SearchPage();
-
-    @BeforeMethod
-    public void setup() {
-        String email = System.getProperty("user", "user@mail.com");
-        String password = System.getProperty("password", "Password123");
-        loginPage.loginAndApprove(email, password);
-    }
 
     @Test(priority = 1, groups = {"smoke"}, description = "4.1. Поиск записи по запросу '1111'")
     @Story("4.1 Поиск по '1111'")
@@ -45,6 +35,7 @@ public class SearchTest extends BaseTest {
                 "Сообщение о пустом результате не отображено";
     }
 }
+
 
 
 

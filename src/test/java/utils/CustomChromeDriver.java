@@ -17,10 +17,11 @@ public class CustomChromeDriver implements WebDriverProvider {
 
         options.addArguments("--user-data-dir=" + profilePath);
         options.addArguments("--window-size=1280,800");
-        options.addArguments("--headless=new");
+        // options.addArguments("--headless=new"); // отключаем скрытый режим
         options.addArguments("--disable-gpu");
 
         return new ChromeDriver(options);
     }
 }
+
 
