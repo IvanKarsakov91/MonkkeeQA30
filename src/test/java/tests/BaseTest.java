@@ -41,9 +41,13 @@ public class BaseTest {
     private void configureBrowser() {
         Configuration.browser = "chrome";
 
-        ChromeOptions chromeOptions = new ChromeOptions();
         String uuid = UUID.randomUUID().toString();
-        chromeOptions.addArguments("--user-data-dir=/tmp/profile-" + uuid);
+        String profilePath = "/tmp/profile-" + uuid;
+
+        log.info("Chrome user-data-dir [{}], thread [{}]", profilePath, Thread.currentThread().getId());
+
+        ChromeOptions chromeOptions = new ChromeOptions();
+        chromeOptions.addArguments("--user-data-dir=" + profilePath);
         chromeOptions.addArguments("--window-size=1280,800");
 
         boolean isHeadless = Boolean.parseBoolean(ConfigReader.get("headless"));
@@ -67,5 +71,4 @@ public class BaseTest {
         Selenide.closeWebDriver();
     }
 }
-
 
