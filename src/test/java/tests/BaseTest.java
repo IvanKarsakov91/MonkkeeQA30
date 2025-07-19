@@ -43,7 +43,6 @@ public class BaseTest {
 
         String uuid = UUID.randomUUID().toString();
         String profilePath = "/tmp/profile-" + uuid;
-
         log.info("Chrome user-data-dir [{}], thread [{}]", profilePath, Thread.currentThread().getId());
 
         ChromeOptions chromeOptions = new ChromeOptions();
@@ -71,4 +70,5 @@ public class BaseTest {
         Selenide.closeWebDriver();
     }
 }
+
 
