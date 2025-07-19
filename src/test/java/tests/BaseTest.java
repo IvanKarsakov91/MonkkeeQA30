@@ -7,7 +7,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.testng.annotations.*;
 import pages.LoginPage;
-import utils.ConfigReader;
 
 public class BaseTest {
 
@@ -19,11 +18,11 @@ public class BaseTest {
     public void setupAndMaybeLogin() {
         configureBrowser();
 
-        boolean requireLogin = Boolean.parseBoolean(ConfigReader.get("requireLogin"));
+        boolean requireLogin = Boolean.parseBoolean(System.getProperty("requireLogin", "true"));
         if (requireLogin) {
             log.info("Выполняем логин перед тестом");
-            String email = ConfigReader.get("user");
-            String password = ConfigReader.get("password");
+            String email = System.getProperty("user", "default@mail.com");
+            String password = System.getProperty("password", "defaultPass");
 
             loginPage.openLoginPage();
             loginPage.login(email, password);
@@ -34,13 +33,12 @@ public class BaseTest {
         }
     }
 
-    @Step("Настройка браузера Chrome без кастомного драйвера")
+    @Step("Настройка браузера через CustomChromeDriver")
     private void configureBrowser() {
-        Configuration.browser = "chrome";
-        Configuration.headless = false;
-        Configuration.browserSize = "1280x800";
+        Configuration.browser = "utils.CustomChromeDriver";
         Configuration.timeout = 6000;
-        log.info("Браузер: Chrome (встроенный)");
+        Configuration.browserSize = "1280x800";
+        log.info("Браузер: CustomChromeDriver с уникальным профилем");
     }
 
     @AfterMethod(alwaysRun = true)
@@ -50,6 +48,4 @@ public class BaseTest {
         Selenide.closeWebDriver();
     }
 }
-
-
 
