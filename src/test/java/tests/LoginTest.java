@@ -29,25 +29,9 @@ public class LoginTest extends BaseTest {
         loginPage.openLoginPage();
         loginPage.login(defaultUser.getEmail(), defaultUser.getPassword());
 
-        // Ожидание появления кнопки 'Go to your entries.'
-        SelenideElement entriesLink = $("a[href='#/entries']");
-        entriesLink.should(appear, Duration.ofSeconds(10));
-        sleep(500);
-        entriesLink.click();
-        sleep(500);
-
-        // Проверка перехода на /#/entries
-        Assert.assertTrue(WebDriverRunner.url().contains("/#/entries"),
-                "После клика по 'Go to your entries' не произошёл переход на /#/entries");
-
-        // Проверка доступности кнопки создания записи
-        SelenideElement createButton = $("#create-entry");
-        createButton.should(exist, Duration.ofSeconds(10));
-        createButton.shouldBe(enabled);
-        log.info("Кнопка 'Create an entry' доступна — тест пройден");
+        Assert.assertEquals(WebDriverRunner.url(), "https://monkkee.com/app/#/entries",
+                "Ожидался переход на страницу записей, но фактический URL: " + WebDriverRunner.url());
     }
-
-
 
     @Test(groups = {"regression"}, retryAnalyzer = listeners.RetryAnalyzer.class,
             description = "2.2. Проверить вход с пустыми всеми полями")

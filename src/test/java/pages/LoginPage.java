@@ -14,77 +14,62 @@ import static com.codeborne.selenide.Selenide.*;
 public class LoginPage {
 
     private static final Logger log = LogManager.getLogger(LoginPage.class);
+    private static final String loginUrl = "https://monkkee.com/app/#/";
 
     private final SelenideElement emailInput = $("#login");
     private final SelenideElement passwordInput = $("#password");
     private final SelenideElement submitButton = $("button[type='submit']");
-    private final SelenideElement logoutLabel = $$("span.user-menu__btn-label").findBy(text("Logout"));
-    private final SelenideElement createEntryButton = $("#create-entry");
+    private final SelenideElement logoutButton = $$("span.user-menu__btn-label").findBy(text("Logout"));
 
     @Step("Открытие страницы логина")
     public void openLoginPage() {
-        open("https://monkkee.com/app/#/");
+        open(loginUrl);
         sleep(500);
+        clearBrowserSession(); // выполняем JS уже после инициализации WebDriver
         emailInput.should(appear, Duration.ofSeconds(10));
-        sleep(500);
+        sleep(300);
         passwordInput.should(appear, Duration.ofSeconds(10));
-        sleep(500);
-        log.info("Открыта страница логина");
+        sleep(300);
+        log.info("Страница логина загружена");
     }
 
-    @Step("Ввод email и пароля с паузами, затем нажатие на 'Login'")
+    @Step("Логин по email и паролю")
     public void login(String email, String password) {
         emailInput.clear();
-        sleep(300);
+        sleep(200);
         emailInput.setValue(email);
-        sleep(500);
-
+        sleep(300);
         passwordInput.clear();
-        sleep(300);
+        sleep(200);
         passwordInput.setValue(password);
-        sleep(500);
-
-        submitButton.shouldBe(enabled, Duration.ofSeconds(5));
         sleep(300);
+        submitButton.shouldBe(enabled, Duration.ofSeconds(5));
         submitButton.click();
-        sleep(500);
-        log.info("Данные логина введены: {}", email);
 
-        for (int i = 0; i < 40; i++) {
+        for (int i = 0; i < 30; i++) {
             if (WebDriverRunner.url().contains("/#/entries")) {
-                log.info("Переход на /#/entries подтверждён автоматически: {}", WebDriverRunner.url());
-                sleep(500);
+                log.info("Переход на /#/entries — успешный логин");
                 return;
             }
             sleep(500);
         }
-        log.warn("После логина не произошёл переход на /#/entries: {}", WebDriverRunner.url());
+
+        throw new IllegalStateException("После логина не произошёл переход на /#/entries");
     }
 
-    @Step("Нажатие на кнопку 'Create an entry'")
-    public void clickCreateEntryButton() {
-        createEntryButton.shouldBe(enabled, Duration.ofSeconds(10));
-        sleep(500);
-        createEntryButton.click();
-        sleep(500);
-        log.info("Кнопка создания новой записи нажата");
-    }
-
-    @Step("Проверка наличия иконки пера (создание новой записи)")
-    public boolean isPenIconPresent() {
-        sleep(300);
-        return $("path#Icon_awesome-pen-nib")
-                .should(appear, Duration.ofSeconds(10))
-                .exists();
+    @Step("Очистка sessionStorage и localStorage")
+    public void clearBrowserSession() {
+        executeJavaScript("window.localStorage.clear(); window.sessionStorage.clear();");
+        log.info("Очистка sessionStorage и localStorage завершена");
     }
 
     @Step("Выход из аккаунта")
     public void logout() {
-        logoutLabel.should(appear, Duration.ofSeconds(10));
+        logoutButton.shouldBe(visible, Duration.ofSeconds(10));
+        sleep(300);
+        logoutButton.click();
         sleep(500);
-        logoutLabel.click();
-        sleep(500);
-        log.info("Пользователь вышел из системы");
+        log.info("Пользователь вышел из аккаунта");
     }
 
     @Step("Ожидание редиректа на /#/")
@@ -100,3 +85,4 @@ public class LoginPage {
         return false;
     }
 }
+
