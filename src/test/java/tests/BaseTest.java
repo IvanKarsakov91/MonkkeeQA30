@@ -5,12 +5,9 @@ import com.codeborne.selenide.Selenide;
 import io.qameta.allure.Step;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.openqa.selenium.chrome.ChromeOptions;
 import org.testng.annotations.*;
 import pages.LoginPage;
 import utils.ConfigReader;
-
-import java.util.UUID;
 
 public class BaseTest {
 
@@ -37,30 +34,11 @@ public class BaseTest {
         }
     }
 
-    @Step("Настройка браузера")
+    @Step("Настройка кастомного драйвера браузера")
     private void configureBrowser() {
-        Configuration.browser = "chrome";
-
-        String uuid = UUID.randomUUID().toString();
-        String profilePath = "/tmp/profile-" + uuid;
-        log.info("Chrome user-data-dir [{}], thread [{}]", profilePath, Thread.currentThread().getId());
-
-        ChromeOptions chromeOptions = new ChromeOptions();
-        chromeOptions.addArguments("--user-data-dir=" + profilePath);
-        chromeOptions.addArguments("--window-size=1280,800");
-
-        boolean isHeadless = Boolean.parseBoolean(ConfigReader.get("headless"));
-        if (isHeadless) {
-            chromeOptions.addArguments("--headless=new");
-            chromeOptions.addArguments("--disable-gpu");
-        }
-
-        Configuration.browserCapabilities = chromeOptions;
+        Configuration.browser = "utils.CustomChromeDriver";
         Configuration.timeout = 6000;
-
-        log.info("Браузер: chrome");
-        log.info("Headless: {}", isHeadless);
-        log.info("Размер окна: 1280x800");
+        log.info("Браузер: CustomChromeDriver");
     }
 
     @AfterMethod(alwaysRun = true)
@@ -70,5 +48,6 @@ public class BaseTest {
         Selenide.closeWebDriver();
     }
 }
+
 
 
