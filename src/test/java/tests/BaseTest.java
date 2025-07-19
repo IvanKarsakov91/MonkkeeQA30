@@ -17,16 +17,12 @@ public class BaseTest {
     private static final Logger log = LogManager.getLogger(BaseTest.class);
     protected LoginPage loginPage = new LoginPage();
 
-    @Parameters({"browser", "requireLogin"})
     @BeforeMethod(alwaysRun = true)
     @Step("Настройка окружения перед тестом")
-    public void setupAndMaybeLogin(
-            @Optional String browserParam,
-            @Optional("true") String requireLoginParam
-    ) {
-        configureBrowser(browserParam);
+    public void setupAndMaybeLogin() {
+        configureBrowser();
 
-        boolean requireLogin = Boolean.parseBoolean(requireLoginParam);
+        boolean requireLogin = Boolean.parseBoolean(ConfigReader.get("requireLogin"));
         if (requireLogin) {
             log.info("Выполняем логин перед тестом");
             String email = ConfigReader.get("user");
@@ -41,44 +37,26 @@ public class BaseTest {
         }
     }
 
-    @Step("Настройка браузера: {browserParam}")
-    private void configureBrowser(String browserParam) {
-        String browser = (browserParam != null && !browserParam.isBlank())
-                ? browserParam
-                : ConfigReader.get("browser");
+    @Step("Настройка браузера")
+    private void configureBrowser() {
+        Configuration.browser = "chrome";
 
-        switch (browser.toLowerCase()) {
-            case "chrome":
-                Configuration.browser = "chrome";
+        ChromeOptions chromeOptions = new ChromeOptions();
+        String uuid = UUID.randomUUID().toString();
+        chromeOptions.addArguments("--user-data-dir=/tmp/profile-" + uuid);
+        chromeOptions.addArguments("--window-size=1280,800");
 
-                ChromeOptions chromeOptions = new ChromeOptions();
-                // Уникальный user-data-dir для каждого потока
-                String uuid = UUID.randomUUID().toString();
-                chromeOptions.addArguments("--user-data-dir=/tmp/profile-" + uuid);
-                chromeOptions.addArguments("--window-size=1280,800");
-
-                boolean isHeadless = Boolean.parseBoolean(ConfigReader.get("headless"));
-                if (isHeadless) {
-                    chromeOptions.addArguments("--headless=new");
-                    chromeOptions.addArguments("--disable-gpu");
-                }
-
-                Configuration.browserCapabilities = chromeOptions;
-                break;
-
-            case "edge":
-                System.setProperty("webdriver.edge.driver", "C:\\Users\\SofIvDar\\Downloads\\edgedriver_win32\\msedgedriver.exe");
-                Configuration.browser = "edge";
-                break;
-
-            default:
-                throw new IllegalArgumentException("Неизвестный браузер: " + browser);
+        boolean isHeadless = Boolean.parseBoolean(ConfigReader.get("headless"));
+        if (isHeadless) {
+            chromeOptions.addArguments("--headless=new");
+            chromeOptions.addArguments("--disable-gpu");
         }
 
+        Configuration.browserCapabilities = chromeOptions;
         Configuration.timeout = 6000;
 
-        log.info("Браузер: {}", Configuration.browser);
-        log.info("Headless: {}", ConfigReader.get("headless"));
+        log.info("Браузер: chrome");
+        log.info("Headless: {}", isHeadless);
         log.info("Размер окна: 1280x800");
     }
 
@@ -89,4 +67,5 @@ public class BaseTest {
         Selenide.closeWebDriver();
     }
 }
+
 
