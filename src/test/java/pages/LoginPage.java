@@ -17,12 +17,11 @@ public class LoginPage {
     private static final Logger log = LogManager.getLogger(LoginPage.class);
 
     private static final String loginUrl = "https://monkkee.com/app/#/";
-    private static final String successRedirectUrl = "/#/entries";
+    private static final String entriesUrl = "https://monkkee.com/app/#/entries";
 
     private final SelenideElement emailInput = $("#login");
     private final SelenideElement passwordInput = $("#password");
     private final SelenideElement submitButton = $("button[type='submit']");
-    private final SelenideElement entriesLink = $("a[href='#/entries']");
     private final SelenideElement logoutLabel = $$("span.user-menu__btn-label").findBy(text("Logout"));
 
     @Step("Открытие страницы входа")
@@ -43,37 +42,33 @@ public class LoginPage {
         log.info("Введены данные пользователя: {}", email);
     }
 
-    @Step("Переход к записям вручную")
-    public void clickEntriesLinkIfVisible() {
-        entriesLink.shouldBe(visible, Duration.ofSeconds(5));
-        if (entriesLink.exists() && entriesLink.isDisplayed()) {
-            entriesLink.click();
-            log.info("Нажата ссылка 'Go to your entries'");
-        }
-    }
-
-    @Step("Ожидание редиректа на /#/entries")
-    public boolean waitForRedirectToEntries() {
+    @Step("Переход напрямую на /#/entries")
+    public void goToEntriesPageDirect() {
+        open(entriesUrl);
         for (int i = 0; i < 20; i++) {
-            if (WebDriverRunner.url().contains(successRedirectUrl)) return true;
+            if (WebDriverRunner.url().contains("/#/entries")) break;
             sleep(250);
         }
-        log.warn("Не удалось дождаться перехода на /#/entries");
-        return false;
+        log.info("Перешли на страницу записей напрямую");
     }
 
-    @Step("Вход с проверкой редиректа")
+    @Step("Вход с проверкой перехода на записи")
     public void loginAndWaitForRedirect(String email, String password) {
         openLoginPage();
         login(email, password);
 
-        if (!waitForRedirectToEntries()) {
-            clickEntriesLinkIfVisible();
-            if (!waitForRedirectToEntries()) {
-                String currentUrl = WebDriverRunner.url();
-                log.error("Редирект не выполнен. Текущий URL: {}", currentUrl);
-                throw new IllegalStateException("Ожидаемый переход на /#/entries не выполнен");
-            }
+        for (int i = 0; i < 20; i++) {
+            if (WebDriverRunner.url().contains("/#/entries")) return;
+            sleep(250);
+        }
+
+        log.warn("Редирект не выполнен, выполняем ручной переход");
+        goToEntriesPageDirect();
+
+        if (!WebDriverRunner.url().contains("/#/entries")) {
+            String currentUrl = WebDriverRunner.url();
+            log.error("Редирект не выполнен. Текущий URL: {}", currentUrl);
+            throw new IllegalStateException("Не удалось попасть на /#/entries");
         }
     }
 
@@ -84,7 +79,7 @@ public class LoginPage {
 
     @Step("Выход из аккаунта")
     public void logout() {
-        logoutLabel.shouldBe(visible, Duration.ofSeconds(10)).click();
+        logoutLabel.should(appear, Duration.ofSeconds(10)).click();
         log.info("Выполнен выход из аккаунта");
     }
 
