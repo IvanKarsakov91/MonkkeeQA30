@@ -52,12 +52,13 @@ public class BaseTest {
                 Configuration.browser = "chrome";
 
                 ChromeOptions chromeOptions = new ChromeOptions();
-                // Уникальный профиль для каждого запуска
+                // Уникальный user-data-dir для каждого потока
                 String uuid = UUID.randomUUID().toString();
                 chromeOptions.addArguments("--user-data-dir=/tmp/profile-" + uuid);
                 chromeOptions.addArguments("--window-size=1280,800");
 
-                if (Boolean.parseBoolean(ConfigReader.get("headless"))) {
+                boolean isHeadless = Boolean.parseBoolean(ConfigReader.get("headless"));
+                if (isHeadless) {
                     chromeOptions.addArguments("--headless=new");
                     chromeOptions.addArguments("--disable-gpu");
                 }
@@ -88,6 +89,4 @@ public class BaseTest {
         Selenide.closeWebDriver();
     }
 }
-
-
 
