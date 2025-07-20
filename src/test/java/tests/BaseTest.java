@@ -13,6 +13,7 @@ import pages.LoginPage;
 import utils.ConfigReader;
 
 import java.util.HashMap;
+import java.util.UUID;
 
 public class BaseTest {
 
@@ -42,25 +43,31 @@ public class BaseTest {
     @Step("Настройка браузера")
     private void configureBrowser() {
         ChromeOptions options = new ChromeOptions();
+
         HashMap<String, Object> chromePrefs = new HashMap<>();
         chromePrefs.put("credentials_enable_service", false);
         chromePrefs.put("profile.password_manager_enabled", false);
         options.setExperimentalOption("prefs", chromePrefs);
 
-        options.addArguments("--incognito");
         options.addArguments("--disable-notifications");
         options.addArguments("--disable-popup-blocking");
         options.addArguments("--disable-infobars");
+        options.addArguments("--disable-dev-shm-usage");
         options.addArguments("--window-size=1280,800");
+        options.addArguments("--user-data-dir=/tmp/chrome-profile-" + UUID.randomUUID());
 
-        Configuration.browser = ConfigReader.get("browser"); // например, chrome или utils.CustomChromeDriver
+        if (Boolean.parseBoolean(ConfigReader.get("headless"))) {
+            options.addArguments("--headless=new");
+        }
+
+        Configuration.browser = ConfigReader.get("browser");
         Configuration.headless = Boolean.parseBoolean(ConfigReader.get("headless"));
         Configuration.pageLoadStrategy = "normal";
         Configuration.timeout = 6000;
         Configuration.browserSize = "1280x800";
         Configuration.browserCapabilities = options;
 
-        log.info("Браузер: {}, headless: {}", Configuration.browser, Configuration.headless);
+        log.info("Запуск браузера: {}, headless: {}", Configuration.browser, Configuration.headless);
     }
 
     @AfterMethod(alwaysRun = true)
@@ -70,6 +77,7 @@ public class BaseTest {
         Selenide.closeWebDriver();
     }
 }
+
 
 
 

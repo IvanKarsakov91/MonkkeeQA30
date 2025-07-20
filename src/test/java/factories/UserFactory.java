@@ -1,7 +1,7 @@
 package factories;
 
 import com.github.javafaker.Faker;
-import config.TestConfig;
+import utils.ConfigReader;
 import io.qameta.allure.Step;
 import models.User;
 import org.apache.logging.log4j.LogManager;
@@ -43,14 +43,15 @@ public class UserFactory {
 
     @Step("Подключение существующего пользователя из config.properties")
     public static User existingUser() {
-        String email = TestConfig.getUserEmail();
-        String password = TestConfig.getUserPassword();
-        String confirmation = TestConfig.getPasswordConfirmation();
-        String hint = TestConfig.getPasswordHint() != null ? TestConfig.getPasswordHint() : "Пароль записан";
+        String email = ConfigReader.get("user");
+        String password = ConfigReader.get("password");
+        String confirmation = ConfigReader.get("passwordConfirmation");
+        String hint = ConfigReader.get("passwordHint", "Пароль записан");
 
         User user = new User(email, password, confirmation, hint);
         log.info("Используется пользователь из config.properties: {}", email);
         return user;
     }
 }
+
 
