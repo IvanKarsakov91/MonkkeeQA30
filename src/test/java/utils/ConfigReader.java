@@ -20,4 +20,8 @@ public class ConfigReader {
     public static String get(String key) {
         return properties.getProperty(key);
     }
+
+    public static String get(String key, String defaultValue) {
+        return properties.getProperty(key, defaultValue);
+    }
 }
