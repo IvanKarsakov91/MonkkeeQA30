@@ -14,6 +14,9 @@ public class EntryTest extends BaseTest {
     @Story("3.1. Чекбокс апрув")
     @Severity(SeverityLevel.CRITICAL)
     public void testCreateEntryWithCheckbox() {
+        loginPage.openLoginPage();
+        loginPage.login(defaultUser.getEmail(), defaultUser.getPassword());
+
         entryPage.goToEntriesPage();
         entryPage.createEntry();
         entryPage.selectFirstEntry();
@@ -27,6 +30,9 @@ public class EntryTest extends BaseTest {
     @Story("3.2. Создать и удалить одну")
     @Severity(SeverityLevel.NORMAL)
     public void testDeleteEntry() {
+        loginPage.openLoginPage();
+        loginPage.login(defaultUser.getEmail(), defaultUser.getPassword());
+
         entryPage.goToEntriesPage();
         entryPage.createEntry();
         entryPage.waitForEntriesToAppear(1);
@@ -43,6 +49,9 @@ public class EntryTest extends BaseTest {
     @Story("3.3. Удаление всех")
     @Severity(SeverityLevel.NORMAL)
     public void testDeleteAllEntries() {
+        loginPage.openLoginPage();
+        loginPage.login(defaultUser.getEmail(), defaultUser.getPassword());
+
         entryPage.goToEntriesPage();
 
         int attempts = 0;
@@ -59,3 +68,4 @@ public class EntryTest extends BaseTest {
         entryPage.confirmTestSuccess();
     }
 }
+

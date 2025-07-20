@@ -7,12 +7,9 @@ import models.User;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.chrome.ChromeOptions;
-<<<<<<< HEAD
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
-=======
 import org.testng.annotations.*;
->>>>>>> c048f94b01e3bcc0f0934851f6fdf1cabc154430
 import pages.LoginPage;
 import utils.ConfigReader;
 
@@ -56,7 +53,7 @@ public class BaseTest {
         options.addArguments("--disable-notifications");
         options.addArguments("--disable-popup-blocking");
         options.addArguments("--disable-infobars");
-<<<<<<< HEAD
+
 
         Configuration.browser = ConfigReader.get("browser");
         Configuration.headless = Boolean.parseBoolean(ConfigReader.get("headless"));
@@ -66,7 +63,7 @@ public class BaseTest {
         Configuration.browserSize = "1280x800";
 
         log.info("Браузер настроен: {}, headless: {}", Configuration.browser, Configuration.headless);
-=======
+
         Configuration.browser = "utils.CustomChromeDriver";
         Configuration.headless = false;
         Configuration.pageLoadStrategy = "normal";
@@ -74,7 +71,7 @@ public class BaseTest {
         Configuration.browserSize = "1280x800";
         Configuration.browserCapabilities = options;
         log.info("Браузер: Chrome визуально запущен");
->>>>>>> c048f94b01e3bcc0f0934851f6fdf1cabc154430
+
     }
 
     @AfterMethod(alwaysRun = true)
