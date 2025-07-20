@@ -70,6 +70,8 @@ public class BaseTest {
         }
 
         else if (browserName.equalsIgnoreCase("edge")) {
+            System.setProperty("webdriver.edge.driver", "C:\\Users\\SofIvDar\\Downloads\\edgedriver_win32\\msedgedriver.exe");
+
             EdgeOptions options = new EdgeOptions();
             options.addArguments("--inPrivate");
             options.addArguments("--disable-notifications");
@@ -104,5 +106,4 @@ public class BaseTest {
         Selenide.closeWebDriver();
     }
 }
-
 

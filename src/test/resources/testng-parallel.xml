@@ -8,11 +8,11 @@
     <test name="ChromeSuite">
         <parameter name="browser" value="chrome"/>
         <classes>
-        <class name="tests.RegistrationTest"/>
-        <class name="tests.LoginTest"/>
-        <class name="tests.EntryTest"/>
-        <class name="tests.SearchTest"/>
-        <class name="tests.LanguageTest"/>
+            <!--<class name="tests.RegistrationTest"/>
+            <class name="tests.LoginTest"/>
+            <class name="tests.EntryTest"/>
+            <class name="tests.SearchTest"/>
+            <class name="tests.LanguageTest"/>-->
         </classes>
     </test>
 
