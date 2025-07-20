@@ -6,8 +6,11 @@ import io.qameta.allure.Step;
 import models.User;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.openqa.selenium.chrome.ChromeOptions;
 import org.testng.annotations.*;
 import pages.LoginPage;
+
+import java.util.HashMap;
 
 public class BaseTest {
 
@@ -32,11 +35,21 @@ public class BaseTest {
 
     @Step("Настройка браузера")
     private void configureBrowser() {
+        ChromeOptions options = new ChromeOptions();
+        HashMap<String, Object> chromePrefs = new HashMap<>();
+        chromePrefs.put("credentials_enable_service", false);
+        chromePrefs.put("profile.password_manager_enabled", false);
+        options.setExperimentalOption("prefs", chromePrefs);
+        options.addArguments("--incognito");
+        options.addArguments("--disable-notifications");
+        options.addArguments("--disable-popup-blocking");
+        options.addArguments("--disable-infobars");
         Configuration.browser = "utils.CustomChromeDriver";
         Configuration.headless = false;
         Configuration.pageLoadStrategy = "normal";
         Configuration.timeout = 6000;
         Configuration.browserSize = "1280x800";
+        Configuration.browserCapabilities = options;
         log.info("Браузер: Chrome визуально запущен");
     }
 
