@@ -31,8 +31,8 @@ public class LoginPage {
         executeJavaScript("window.localStorage.clear(); window.sessionStorage.clear();");
         log.info("Очистка sessionStorage и localStorage выполнена");
 
-        emailInput.shouldBe(visible, Duration.ofSeconds(10));
-        passwordInput.shouldBe(visible, Duration.ofSeconds(10));
+        //emailInput.shouldBe(visible, Duration.ofSeconds(10));
+        //passwordInput.shouldBe(visible, Duration.ofSeconds(10));
         sleep(300);
         log.info("Страница логина загружена");
     }

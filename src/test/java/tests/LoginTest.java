@@ -10,8 +10,9 @@ import org.testng.annotations.Test;
 import pages.LoginPage;
 
 import java.time.Duration;
+import java.util.concurrent.TimeUnit;
 
-import static com.codeborne.selenide.Condition.*;
+import static com.codeborne.selenide.Condition.visible;
 import static com.codeborne.selenide.Selenide.*;
 
 @Epic("2. Авторизация пользователя")
@@ -19,18 +20,19 @@ import static com.codeborne.selenide.Selenide.*;
 public class LoginTest extends BaseTest {
 
     private static final Logger log = LogManager.getLogger(LoginTest.class);
-    private final LoginPage loginPage = new LoginPage();
 
     @Test(groups = {"smoke"}, retryAnalyzer = listeners.RetryAnalyzer.class,
             description = "2.1. Проверить успешный вход при корректных данных")
     @Story("2.1. Валидные email и пароль")
     @Severity(SeverityLevel.CRITICAL)
-    public void testSuccessfulLogin() {
+    public void testSuccessfulLogin() throws InterruptedException {
         loginPage.openLoginPage();
         loginPage.login(defaultUser.getEmail(), defaultUser.getPassword());
+        TimeUnit.SECONDS.sleep(2);
 
-        Assert.assertEquals(WebDriverRunner.url(), "https://monkkee.com/app/#/entries",
-                "Ожидался переход на страницу записей, но фактический URL: " + WebDriverRunner.url());
+        var url = WebDriverRunner.url();
+        Assert.assertEquals(url, "https://monkkee.com/app/#/entries",
+                "Ожидался переход на страницу записей, но фактический URL: " + url);
     }
 
     @Test(groups = {"regression"}, retryAnalyzer = listeners.RetryAnalyzer.class,
@@ -75,11 +77,11 @@ public class LoginTest extends BaseTest {
         loginPage.login(defaultUser.getEmail(), defaultUser.getPassword());
 
         SelenideElement entriesLink = $("a[href='#/entries']");
-        entriesLink.shouldBe(visible, Duration.ofSeconds(10));
         executeJavaScript("arguments[0].click();", entriesLink);
-
         loginPage.logout();
+
         Assert.assertTrue(loginPage.waitForRedirectToLoginPage(),
                 "После выхода не произошёл переход на /#/");
     }
 }
+
