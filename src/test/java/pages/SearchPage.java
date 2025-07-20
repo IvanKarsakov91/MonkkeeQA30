@@ -24,10 +24,16 @@ public class SearchPage {
     private final SelenideElement noResultsBlock = $("div.entries__no-entries");
     private final ElementsCollection entryLinks = $$("a.entries__entry");
 
+    @Step("Переход на страницу записей")
+    public void goToEntriesPage() {
+        open("https://monkkee.com/app/#/entries");
+        createEntryButton.shouldBe(visible, TIMEOUT);
+        log.info("Страница записей успешно открыта");
+    }
+
     @Step("Создаём запись с текстом: {text}")
     public void createEntry(String text) {
         createEntryButton.shouldBe(visible, enabled).click();
-
         sleep(700);
 
         editor.should(visible, Duration.ofSeconds(10)).shouldBe(enabled);
@@ -71,6 +77,5 @@ public class SearchPage {
         return shown;
     }
 }
-
 
 

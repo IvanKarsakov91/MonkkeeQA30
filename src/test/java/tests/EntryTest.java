@@ -53,14 +53,7 @@ public class EntryTest extends BaseTest {
         loginPage.login(defaultUser.getEmail(), defaultUser.getPassword());
 
         entryPage.goToEntriesPage();
-
-        int attempts = 0;
-        while (entryPage.getEntryCount() < 2 && attempts < 2) {
-            entryPage.createEntry();
-            entryPage.waitForEntriesToAppear(1);
-            attempts++;
-        }
-
+        entryPage.ensureMinimumEntries(2);
         entryPage.deleteAllEntries();
         entryPage.waitForAllEntriesToDisappear();
 
@@ -68,4 +61,5 @@ public class EntryTest extends BaseTest {
         entryPage.confirmTestSuccess();
     }
 }
+
 

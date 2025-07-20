@@ -1,38 +1,22 @@
 package tests;
 
-import com.codeborne.selenide.SelenideElement;
 import com.codeborne.selenide.WebDriverRunner;
 import io.qameta.allure.*;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.testng.Assert;
 import org.testng.annotations.Test;
-import pages.LoginPage;
-
-import java.time.Duration;
-import java.util.concurrent.TimeUnit;
-
-import static com.codeborne.selenide.Condition.visible;
-import static com.codeborne.selenide.Selenide.*;
 
 @Epic("2. Авторизация пользователя")
 @Feature("2.0. Проверка формы логина")
 public class LoginTest extends BaseTest {
 
-    private static final Logger log = LogManager.getLogger(LoginTest.class);
-
     @Test(groups = {"smoke"}, retryAnalyzer = listeners.RetryAnalyzer.class,
             description = "2.1. Проверить успешный вход при корректных данных")
     @Story("2.1. Валидные email и пароль")
     @Severity(SeverityLevel.CRITICAL)
-    public void testSuccessfulLogin() throws InterruptedException {
+    public void testSuccessfulLogin() {
         loginPage.openLoginPage();
         loginPage.login(defaultUser.getEmail(), defaultUser.getPassword());
-        TimeUnit.SECONDS.sleep(2);
-
-        var url = WebDriverRunner.url();
-        Assert.assertEquals(url, "https://monkkee.com/app/#/entries",
-                "Ожидался переход на страницу записей, но фактический URL: " + url);
+        Assert.assertTrue(loginPage.isOnEntriesPage(), "Ожидался переход на /#/entries");
     }
 
     @Test(groups = {"regression"}, retryAnalyzer = listeners.RetryAnalyzer.class,
@@ -42,8 +26,7 @@ public class LoginTest extends BaseTest {
     public void testLoginWithEmptyFields() {
         loginPage.openLoginPage();
         loginPage.login("", "");
-        Assert.assertFalse(WebDriverRunner.url().contains("/#/entries"),
-                "Переход не должен происходить при пустых данных");
+        Assert.assertFalse(loginPage.isOnEntriesPage(), "Переход не должен происходить при пустых данных");
     }
 
     @Test(groups = {"regression"}, retryAnalyzer = listeners.RetryAnalyzer.class,
@@ -53,8 +36,7 @@ public class LoginTest extends BaseTest {
     public void testLoginWithEmptyPassword() {
         loginPage.openLoginPage();
         loginPage.login(defaultUser.getEmail(), "");
-        Assert.assertFalse(WebDriverRunner.url().contains("/#/entries"),
-                "Переход не должен происходить при пустом пароле");
+        Assert.assertFalse(loginPage.isOnEntriesPage(), "Переход не должен происходить при пустом пароле");
     }
 
     @Test(groups = {"regression"}, retryAnalyzer = listeners.RetryAnalyzer.class,
@@ -64,8 +46,7 @@ public class LoginTest extends BaseTest {
     public void testLoginWithEmptyEmail() {
         loginPage.openLoginPage();
         loginPage.login("", defaultUser.getPassword());
-        Assert.assertFalse(WebDriverRunner.url().contains("/#/entries"),
-                "Переход не должен происходить при пустом email");
+        Assert.assertFalse(loginPage.isOnEntriesPage(), "Переход не должен происходить при пустом email");
     }
 
     @Test(groups = {"regression"}, retryAnalyzer = listeners.RetryAnalyzer.class,
@@ -75,13 +56,9 @@ public class LoginTest extends BaseTest {
     public void testLogoutFromAccount() {
         loginPage.openLoginPage();
         loginPage.login(defaultUser.getEmail(), defaultUser.getPassword());
-
-        SelenideElement entriesLink = $("a[href='#/entries']");
-        executeJavaScript("arguments[0].click();", entriesLink);
+        loginPage.goToEntriesPage();
         loginPage.logout();
-
-        Assert.assertTrue(loginPage.waitForRedirectToLoginPage(),
-                "После выхода не произошёл переход на /#/");
+        Assert.assertTrue(loginPage.waitForRedirectToLoginPage(), "После выхода не произошёл переход на /#/");
     }
 }
 

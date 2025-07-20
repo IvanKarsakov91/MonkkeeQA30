@@ -26,3 +26,4 @@ public class BasePage {
         getDriver().navigate().refresh();
     }
 }
+

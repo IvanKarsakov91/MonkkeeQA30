@@ -21,6 +21,7 @@ public class LoginPage {
     private final SelenideElement passwordInput = $("#password");
     private final SelenideElement submitButton = $("button[type='submit']");
     private final SelenideElement logoutButton = $$("span.user-menu__btn-label").findBy(text("Logout"));
+    private final SelenideElement entriesLink = $("a[href='#/entries']");
 
     @Step("Открытие страницы логина")
     public void openLoginPage() {
@@ -30,9 +31,6 @@ public class LoginPage {
         sleep(600);
         executeJavaScript("window.localStorage.clear(); window.sessionStorage.clear();");
         log.info("Очистка sessionStorage и localStorage выполнена");
-
-        //emailInput.shouldBe(visible, Duration.ofSeconds(10));
-        //passwordInput.shouldBe(visible, Duration.ofSeconds(10));
         sleep(300);
         log.info("Страница логина загружена");
     }
@@ -62,8 +60,9 @@ public class LoginPage {
         throw new IllegalStateException("После логина не произошёл переход на /#/ или /#/entries");
     }
 
+    @Step("Переход на страницу записей через JS")
     public void goToEntriesPage() {
-        executeJavaScript("document.querySelector(\"a[href='#/entries']\")?.click()");
+        executeJavaScript("arguments[0].click();", entriesLink);
         sleep(1000);
         log.info("Переход на страницу записей выполнен через JS");
     }
@@ -88,4 +87,10 @@ public class LoginPage {
         log.warn("Редирект после выхода не выполнен");
         return false;
     }
+
+    @Step("Проверка, что открыт /#/entries")
+    public boolean isOnEntriesPage() {
+        return WebDriverRunner.url().contains("/#/entries");
+    }
 }
+

@@ -61,6 +61,16 @@ public class EntryPage {
         Allure.addAttachment("Навигация", "Вернулись к списку записей");
     }
 
+    @Step("Обеспечить наличие как минимум {minCount} записей")
+    public void ensureMinimumEntries(int minCount) {
+        int attempts = 0;
+        while (getEntryCount() < minCount && attempts < 2) {
+            createEntry();
+            waitForEntriesToAppear(1);
+            attempts++;
+        }
+    }
+
     @Step("Выбрать первую запись")
     public void selectFirstEntry() {
         firstEntryCheckbox.should(appear, TIMEOUT).click();

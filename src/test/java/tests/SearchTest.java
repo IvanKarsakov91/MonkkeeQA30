@@ -4,8 +4,6 @@ import io.qameta.allure.*;
 import org.testng.annotations.Test;
 import pages.SearchPage;
 
-import static com.codeborne.selenide.Selenide.open;
-
 @Epic("4. Поиск")
 @Feature("4.0 Поиск записей")
 public class SearchTest extends BaseTest {
@@ -20,8 +18,8 @@ public class SearchTest extends BaseTest {
 
         loginPage.openLoginPage();
         loginPage.login(defaultUser.getEmail(), defaultUser.getPassword());
-        open("https://monkkee.com/app/#/entries");
 
+        searchPage.goToEntriesPage();
         searchPage.createEntry(searchTerm);
         searchPage.search(searchTerm);
         searchPage.waitForSearchResults(1);
@@ -38,9 +36,10 @@ public class SearchTest extends BaseTest {
 
         loginPage.openLoginPage();
         loginPage.login(defaultUser.getEmail(), defaultUser.getPassword());
-        open("https://monkkee.com/app/#/entries");
 
+        searchPage.goToEntriesPage();
         searchPage.search(invalidQuery);
+
         assert searchPage.isNoResultsShown() :
                 "Сообщение о пустом результате не отображено";
     }
