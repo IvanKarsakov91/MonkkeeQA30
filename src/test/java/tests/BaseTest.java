@@ -9,11 +9,8 @@ import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.*;
 import pages.LoginPage;
 import utils.ConfigReader;
-
-import java.util.HashMap;
 
 import java.util.HashMap;
 
@@ -49,29 +46,21 @@ public class BaseTest {
         chromePrefs.put("credentials_enable_service", false);
         chromePrefs.put("profile.password_manager_enabled", false);
         options.setExperimentalOption("prefs", chromePrefs);
-        options.addArguments("--incognito");
+
+        options.addArguments("--incognito");                       // включённый режим инкогнито
         options.addArguments("--disable-notifications");
         options.addArguments("--disable-popup-blocking");
         options.addArguments("--disable-infobars");
+        options.addArguments("--window-size=1280,800");
 
-
-        Configuration.browser = ConfigReader.get("browser");
+        Configuration.browser = ConfigReader.get("browser");       // chrome или твой кастомный драйвер
         Configuration.headless = Boolean.parseBoolean(ConfigReader.get("headless"));
-        Configuration.browserCapabilities = options;
-        Configuration.pageLoadStrategy = "normal";
-        Configuration.timeout = 6000;
-        Configuration.browserSize = "1280x800";
-
-        log.info("Браузер настроен: {}, headless: {}", Configuration.browser, Configuration.headless);
-
-        Configuration.browser = "utils.CustomChromeDriver";
-        Configuration.headless = false;
         Configuration.pageLoadStrategy = "normal";
         Configuration.timeout = 6000;
         Configuration.browserSize = "1280x800";
         Configuration.browserCapabilities = options;
-        log.info("Браузер: Chrome визуально запущен");
 
+        log.info("Браузер: {} запущен в режиме инкогнито, headless: {}", Configuration.browser, Configuration.headless);
     }
 
     @AfterMethod(alwaysRun = true)
@@ -81,6 +70,7 @@ public class BaseTest {
         Selenide.closeWebDriver();
     }
 }
+
 
 
 
