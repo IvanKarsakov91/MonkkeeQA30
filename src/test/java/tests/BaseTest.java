@@ -55,7 +55,6 @@ public class BaseTest {
         options.addArguments("--disable-dev-shm-usage");
         options.addArguments("--window-size=1280,800");
 
-        // Кросс-платформенный путь для временного профиля
         String tempProfilePath = System.getProperty("java.io.tmpdir") + "/chrome-profile-" + UUID.randomUUID();
         options.addArguments("--user-data-dir=" + tempProfilePath);
 
@@ -70,7 +69,7 @@ public class BaseTest {
         Configuration.browserSize = "1280x800";
         Configuration.browserCapabilities = options;
 
-        log.info("Запуск браузера: {}, headless: {}, profile: {}", Configuration.browser, Configuration.headless, tempProfilePath);
+        log.info("Запуск браузера: {}, headless: {}, profilePath: {}", Configuration.browser, Configuration.headless, tempProfilePath);
     }
 
     @AfterMethod(alwaysRun = true)
@@ -80,9 +79,3 @@ public class BaseTest {
         Selenide.closeWebDriver();
     }
 }
-
-
-
-
-
-
